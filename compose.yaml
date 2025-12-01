@@ -11,11 +11,14 @@ services:
   server:
     build:
       context: .
+    volumes:
+      - .:/usr/src/app
+      #- /usr/src/app/node_modules
     image: vaii-frontend
     environment:
-      NODE_ENV: production
+      - CHOKIDAR_USEPOLLING=true
     ports:
-      - 4173:4173
+      - 5173:5173
 
 # The commented out section below is an example of how to define a PostgreSQL
 # database that your application can use. `depends_on` tells Docker Compose to
