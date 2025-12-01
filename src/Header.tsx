@@ -1,4 +1,5 @@
 import "./Header.css";
+import { Link } from "react-router-dom";
 
 function Header() {
   return (
@@ -46,14 +47,14 @@ function Header() {
           </li>
         </ul>
 
-        <a
-          href="/forms/Login.tsx"
+        <Link
+          to="/forms"
           className="navbar-text-form hidden md:inline-block px-6 py-2.5 rounded-xl bg-gray-900 text-white 
         font-semibold decoration-none transition-all duration-200 
         hover:bg-[#78E778] hover:shadow-lg"
         >
           Prihlásiť sa
-        </a>
+        </Link>
       </div>
     </nav>
   );
