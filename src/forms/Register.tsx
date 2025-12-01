@@ -1,5 +1,61 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+
 function Register() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmError, setConfirmError] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (emailError || passwordError || confirmError) {
+      return;
+    }
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmail(value);
+
+    if (!value.includes("@")) {
+      setEmailError("Zadaj platný e-mail");
+    } else {
+      setEmailError("");
+    }
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPassword(value);
+
+    if (value.length < 8) {
+      setPasswordError("Heslo musí mať aspoň 8 znakov");
+    } else {
+      setPasswordError("");
+    }
+
+    if (confirmPassword && value !== confirmPassword) {
+      setConfirmError("Heslá sa nezhodujú");
+    } else {
+      setConfirmError("");
+    }
+  };
+
+  const handleConfirmChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setConfirmPassword(value);
+
+    if (password !== value) {
+      setConfirmError("Heslá sa nezhodujú");
+    } else {
+      setConfirmError("");
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#d8f5d8] via-[#b8f0b8] to-[#78e778]">
       <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
@@ -19,8 +75,14 @@ function Register() {
               type="email"
               id="email"
               placeholder="tvoj@email.sk"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#78E778]"
+              value={email}
+              onChange={handleEmailChange}
+              className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#78E778] text-black
+              ${emailError ? "border-red-500 focus:ring-red-500" : ""}`}
             />
+            {emailError && (
+              <p className="text-red-500 text-sm mt-1">{emailError}</p>
+            )}
           </div>
 
           <div>
@@ -33,9 +95,15 @@ function Register() {
             <input
               type="password"
               id="password"
-              placeholder="••••••••"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#78E778]"
+              placeholder="••••••••••"
+              value={password}
+              onChange={handlePasswordChange}
+              className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#78E778] text-black
+              ${passwordError ? "border-red-500 focus:ring-red-500" : ""}`}
             />
+            {passwordError && (
+              <p className="text-red-500 text-sm mt-1">{passwordError}</p>
+            )}
           </div>
 
           <div>
@@ -50,9 +118,15 @@ function Register() {
             <input
               type="password"
               id="confirmPassword"
-              placeholder="••••••••"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#78E778]"
-            />{" "}
+              placeholder="••••••••••"
+              value={confirmPassword}
+              onChange={handleConfirmChange}
+              className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#78E778] text-black
+              ${confirmError ? "border-red-500 focus:ring-red-500" : ""}`}
+            />
+            {confirmError && (
+              <p className="text-red-500 text-sm mt-1">{confirmError}</p>
+            )}
           </div>
 
           <button

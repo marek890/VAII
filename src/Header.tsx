@@ -49,9 +49,9 @@ function Header() {
 
         <Link
           to="/login"
-          className="navbar-text-form inline-block px-6 py-2.5 rounded-xl bg-gray-900 text-white 
+          className="navbar-text-form inline-block px-6 py-2.5 rounded-xl bg-gray-100 text-gray-500
         font-semibold decoration-none transition-all duration-200 
-        hover:bg-[#78E778] hover:shadow-lg"
+        hover:bg-[#78E778] hover:text-white hover:shadow-lg"
         >
           Prihlásiť sa
         </Link>

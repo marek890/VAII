@@ -20,7 +20,7 @@ function Login() {
               type="email"
               id="email"
               placeholder="tvoj@email.sk"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#78E778]"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#78E778] text-black"
             />
           </div>
 
@@ -34,8 +34,8 @@ function Login() {
             <input
               type="password"
               id="password"
-              placeholder="••••••••"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#78E778]"
+              placeholder="••••••••••"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#78E778] text-black"
             />
           </div>
 
@@ -43,7 +43,7 @@ function Login() {
             type="submit"
             className="px-3 py-3 rounded-xl bg-gray-100 text-gray-500 
            font-semibold transition-all duration-200 
-           hover:bg-[#78e778] hover:!text-white hover:shadow-lg mx-auto block"
+           hover:bg-[#78e778] hover:text-white hover:shadow-lg mx-auto block"
           >
             Prihlásiť sa
           </button>
