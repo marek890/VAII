@@ -50,7 +50,7 @@ function Login() {
         </form>
         <p className="text-center text-gray-400 text-sm mt-4">
           Nemáš účet?{" "}
-          <Link to="/forms" className="text-gray-600 hover:!text-[#78e778]">
+          <Link to="/register" className="text-gray-600 hover:!text-[#78e778]">
             Zaregistruj sa
           </Link>
         </p>
