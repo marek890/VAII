@@ -7,7 +7,7 @@ function Header() {
       <div className="flex justify-between items-center w-full">
         <a
           href="/"
-          className="navbar-text text-3xl font-bold tracking-tight text-gray-900 decoration-none"
+          className="navbar-text text-3xl font-bold tracking-tight text-gray-500 decoration-none transition-all duration-200 hover:text-[#78E778]"
         >
           Brand
         </a>
@@ -16,9 +16,9 @@ function Header() {
           <li>
             <a
               href="/"
-              className="navbar-text inline-block px-4 py-2 rounded-lg bg-gray-100 text-gray-900 
+              className="navbar-text inline-block px-4 py-2 rounded-lg bg-gray-100 text-gray-500 
             font-medium decoration-none transition-all duration-200 
-            hover:bg-gray-200 hover:shadow-md"
+            hover:bg-gray-200 hover:shadow-md hover:text-[#78E778]"
             >
               Domov
             </a>
@@ -27,9 +27,9 @@ function Header() {
           <li>
             <a
               href="#"
-              className="navbar-text inline-block px-4 py-2 rounded-lg bg-gray-100 text-gray-900 
+              className="navbar-text inline-block px-4 py-2 rounded-lg bg-gray-100 text-gray-500 
             font-medium decoration-none transition-all duration-200 
-            hover:bg-gray-200 hover:shadow-md"
+            hover:bg-gray-200 hover:shadow-md hover:text-[#78E778]"
             >
               Rezervácia
             </a>
@@ -38,9 +38,9 @@ function Header() {
           <li>
             <a
               href="#"
-              className="navbar-text inline-block px-4 py-2 rounded-lg bg-gray-100 text-gray-900 
+              className="navbar-text inline-block px-4 py-2 rounded-lg bg-gray-100 text-gray-500 
             font-medium transition-all duration-200 
-            hover:bg-gray-200 hover:shadow-md"
+            hover:bg-gray-200 hover:shadow-md hover:text-[#78E778]"
             >
               Kontakt
             </a>
@@ -49,7 +49,7 @@ function Header() {
 
         <Link
           to="/forms"
-          className="navbar-text-form hidden md:inline-block px-6 py-2.5 rounded-xl bg-gray-900 text-white 
+          className="navbar-text-form inline-block px-6 py-2.5 rounded-xl bg-gray-900 text-white 
         font-semibold decoration-none transition-all duration-200 
         hover:bg-[#78E778] hover:shadow-lg"
         >
