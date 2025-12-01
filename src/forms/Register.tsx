@@ -80,9 +80,10 @@ function Register() {
               className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#78E778] text-black
               ${emailError ? "border-red-500 focus:ring-red-500" : ""}`}
             />
-            {emailError && (
-              <p className="text-red-500 text-sm mt-1">{emailError}</p>
-            )}
+
+            <p className="text-red-500 text-sm mt-1">
+              {emailError || "\u00A0"}
+            </p>
           </div>
 
           <div>
@@ -101,9 +102,10 @@ function Register() {
               className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#78E778] text-black
               ${passwordError ? "border-red-500 focus:ring-red-500" : ""}`}
             />
-            {passwordError && (
-              <p className="text-red-500 text-sm mt-1">{passwordError}</p>
-            )}
+
+            <p className="text-red-500 text-sm mt-1">
+              {passwordError || "\u00A0"}
+            </p>
           </div>
 
           <div>
@@ -124,16 +126,17 @@ function Register() {
               className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#78E778] text-black
               ${confirmError ? "border-red-500 focus:ring-red-500" : ""}`}
             />
-            {confirmError && (
-              <p className="text-red-500 text-sm mt-1">{confirmError}</p>
-            )}
+            <p className="text-red-500 text-sm mt-1">
+              {confirmError || "\u00A0"}
+            </p>
           </div>
 
           <button
             type="submit"
             className="px-3 py-3 rounded-xl bg-gray-100 text-gray-500 
            font-semibold transition-all duration-200 
-           hover:bg-[#78e778] hover:!text-white hover:shadow-lg mx-auto block"
+           hover:bg-[#78e778] hover:!text-white hover:shadow-lg mx-auto block disabled:opacity-50"
+            disabled={!!emailError || !!passwordError || !!confirmError}
           >
             Registrovať sa
           </button>

@@ -64,9 +64,10 @@ function Login() {
                   : ""
               }`}
             />
-            {emailError && (
-              <p className="text-red-500 text-sm mt-1">{emailError}</p>
-            )}
+
+            <p className="text-red-500 text-sm mt-1">
+              {emailError || "\u00A0"}
+            </p>
           </div>
 
           <div>
@@ -88,9 +89,9 @@ function Login() {
                   : ""
               }`}
             />
-            {passwordError && (
-              <p className="text-red-500 text-sm mt-1">{passwordError}</p>
-            )}
+            <p className="text-red-500 text-sm mt-1">
+              {passwordError || "\u00A0"}
+            </p>
           </div>
 
           <button
