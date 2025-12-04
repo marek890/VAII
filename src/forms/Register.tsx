@@ -103,6 +103,7 @@ function Register() {
               E-mail
             </label>
             <input
+              required
               type="email"
               id="email"
               placeholder="tvoj@email.sk"
@@ -125,6 +126,7 @@ function Register() {
               Heslo
             </label>
             <input
+              required
               type="password"
               id="password"
               placeholder="••••••••••"
@@ -149,6 +151,7 @@ function Register() {
               Potvrď heslo{" "}
             </label>{" "}
             <input
+              required
               type="password"
               id="confirmPassword"
               placeholder="••••••••••"
