@@ -1,5 +1,9 @@
+import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { pool } from "../db.js";
+
+const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_EXPIRES = "1h";
 
 export const registerUser = async (req, res) => {
   const { email, password } = req.body;
@@ -48,7 +52,16 @@ export const loginUser = async (req, res) => {
       return res.status(401).json({ error: "Nesprávne heslo" });
     }
 
-    return res.status(200).json({ message: "Prihlásenie úspešné" });
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role_id },
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES }
+    );
+
+    return res.status(200).json({
+      message: "Prihlásenie úspešné",
+      token,
+    });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "Server error" });

@@ -1,6 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { isLoggedIn } from "../utils/auth";
 
 function Register() {
+  useEffect(() => {
+    if (isLoggedIn()) {
+      window.location.href = "/";
+    }
+  }, []);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");

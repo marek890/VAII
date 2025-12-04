@@ -1,7 +1,14 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { isLoggedIn } from "../utils/auth";
 
 function Login() {
+  useEffect(() => {
+    if (isLoggedIn()) {
+      window.location.href = "/";
+    }
+  }, []);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -32,8 +39,10 @@ function Login() {
         return;
       }
 
+      localStorage.setItem("token", data.token);
       setMessageType("success");
       setMessage(data.message || "Prihlásenie úspešné!");
+      window.location.href = "/";
       setEmail("");
       setPassword("");
     } catch (err) {
