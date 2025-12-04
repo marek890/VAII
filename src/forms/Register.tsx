@@ -4,16 +4,47 @@ function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState<"error" | "success">(
+    "success"
+  );
 
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmError, setConfirmError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (emailError || passwordError || confirmError) {
       return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:5000/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setMessageType("error");
+        setMessage(data.error || "Registrácia zlyhala");
+        return;
+      }
+
+      setMessageType("success");
+      setMessage(data.message || "Registrácia úspešná!");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+    } catch (err) {
+      alert("Nepodarilo sa spojiť so serverom.");
     }
   };
 
@@ -63,7 +94,7 @@ function Register() {
           Registrácia
         </h2>
 
-        <form className="space-y-2">
+        <form className="space-y-2" onSubmit={handleSubmit}>
           <div>
             <label
               htmlFor="email"
@@ -140,6 +171,15 @@ function Register() {
           >
             Registrovať sa
           </button>
+          {message && (
+            <p
+              className={`text-sm mt-2 ${
+                messageType === "error" ? "text-red-500" : "text-green-500"
+              } text-center`}
+            >
+              {message}
+            </p>
+          )}
         </form>
       </div>
     </div>

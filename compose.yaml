@@ -1,14 +1,5 @@
-# Comments are provided throughout this file to help you get started.
-# If you need more help, visit the Docker Compose reference guide at
-# https://docs.docker.com/go/compose-spec-reference/
-
-# Here the instructions define your application as a service called "server".
-# This service is built from the Dockerfile in the current directory.
-# You can add other services your application may depend on here, such as a
-# database or a cache. For examples, see the Awesome Compose repository:
-# https://github.com/docker/awesome-compose
 services:
-  server:
+  frontend:
     build:
       context: .
     volumes:
@@ -17,16 +8,31 @@ services:
     environment:
       - CHOKIDAR_USEPOLLING=true
     ports:
-      - 5173:5173
+      - "5173:5173"
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./server
+    command: ["npm", "run", "dev"]
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    image: vaii-backend
+    env_file:
+      - ./server/.env
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
 
   postgres:
     image: postgres:16
     container_name: postgres-db
     restart: always
-    environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: vajko123
-      POSTGRES_DB: vaii_db
+    env_file:
+      - ./server/.env
     ports:
       - "5432:5432"
     volumes:
@@ -34,5 +40,3 @@ services:
 
 volumes:
   postgres_data:
-
-
