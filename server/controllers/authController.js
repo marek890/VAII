@@ -24,3 +24,33 @@ export const registerUser = async (req, res) => {
     return res.status(500).json({ error: "Registrácia zlyhala" });
   }
 };
+
+export const loginUser = async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !email.includes("@") || !password || password.length < 8) {
+    return res.status(400).json({ error: "Neplatný email alebo heslo" });
+  }
+
+  try {
+    const result = await pool.query('SELECT * FROM "User" WHERE email = $1', [
+      email,
+    ]);
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({ error: "Užívateľ neexistuje" });
+    }
+
+    const user = result.rows[0];
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ error: "Nesprávne heslo" });
+    }
+
+    return res.status(200).json({ message: "Prihlásenie úspešné" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Server error" });
+  }
+};

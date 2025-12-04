@@ -1,7 +1,7 @@
 import "./Header.css";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { FiMenu, FiX } from "react-icons/fi"; // hamburger a X ikony
+import { FiMenu, FiX } from "react-icons/fi";
 
 function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,7 +18,6 @@ function Header() {
           Brand
         </Link>
 
-        {/* Desktop menu */}
         <ul className="hidden md:flex items-center space-x-6 text-lg">
           <li>
             <Link
@@ -46,7 +45,6 @@ function Header() {
           </li>
         </ul>
 
-        {/* Login button */}
         <Link
           to="/login"
           className="hidden md:inline-block px-6 py-2.5 rounded-xl bg-gray-100 text-gray-500 font-semibold transition-all duration-200 hover:bg-[#78E778] hover:text-white hover:shadow-lg"
@@ -54,7 +52,6 @@ function Header() {
           Prihlásiť sa
         </Link>
 
-        {/* Hamburger button for mobile */}
         <button
           className="md:hidden text-2xl text-gray-500"
           onClick={toggleMenu}
@@ -63,7 +60,6 @@ function Header() {
         </button>
       </div>
 
-      {/* Mobile menu */}
       {isOpen && (
         <ul className="flex flex-col mt-3 space-y-2 md:hidden">
           <li>
