@@ -58,12 +58,12 @@ function Register() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#d8f5d8] via-[#b8f0b8] to-[#78e778]">
-      <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
+      <div className="bg-white p-8 rounded-xl shadow-xl/25 w-full max-w-md">
         <h2 className="text-3xl font-bold text-gray-900 text-center mb-6">
           Registrácia
         </h2>
 
-        <form className="space-y-4">
+        <form className="space-y-2">
           <div>
             <label
               htmlFor="email"
@@ -123,7 +123,7 @@ function Register() {
               placeholder="••••••••••"
               value={confirmPassword}
               onChange={handleConfirmChange}
-              className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#78E778] text-black
+              className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#78e778] text-black
               ${confirmError ? "border-red-500 focus:ring-red-500" : ""}`}
             />
             <p className="text-red-500 text-sm mt-1">

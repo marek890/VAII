@@ -1,0 +1,94 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  user_id    Int    @id @default(autoincrement())
+  first_name String
+  last_name  String
+  email      String @unique
+  password   String
+  phone      String?
+  role_id    Int
+  role       Role    @relation(fields: [role_id], references: [role_id])
+
+  cars             Car[]
+  appointments_as_customer Appointment[] @relation("CustomerAppointments")
+  appointments_as_mechanic Appointment[] @relation("MechanicAppointments")
+}
+
+model Role {
+  role_id   Int     @id @default(autoincrement())
+  role_name String  @unique
+
+  users     User[]
+}
+
+model Status {
+  status_id Int @id @default(autoincrement())
+  name      String
+  appointments Appointment[]
+}
+
+model Car {
+  car_id  Int    @id @default(autoincrement())
+  brand   String
+  model   String
+  license_plate String
+  
+  user_id Int
+  user    User   @relation(fields: [user_id], references: [user_id])
+
+  appointments Appointment[]
+}
+
+model Service {
+  service_id Int    @id @default(autoincrement())
+  service_name String
+  description  String?
+  estimated_duration Int
+
+  appointmentServices AppointmentService[]
+}
+
+model Appointment {
+  appointment_id Int @id @default(autoincrement())
+
+  customer_id Int
+  mechanic_id Int
+  car_id      Int
+  status_id   Int
+
+  customer User @relation("CustomerAppointments", fields: [customer_id], references: [user_id])
+  mechanic User @relation("MechanicAppointments", fields: [mechanic_id], references: [user_id])
+  car      Car  @relation(fields: [car_id], references: [car_id])
+  status   Status @relation(fields: [status_id], references: [status_id])
+
+  appointment_date DateTime
+  appointment_time DateTime
+  notes        String?
+  created_at   DateTime @default(now())
+
+  services AppointmentService[]
+}
+
+model AppointmentService {
+  appointment_id Int
+  service_id     Int
+
+  appointment Appointment @relation(fields: [appointment_id], references: [appointment_id])
+  service     Service     @relation(fields: [service_id], references: [service_id])
+
+  @@id([appointment_id, service_id])
+}
