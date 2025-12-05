@@ -1,5 +1,5 @@
 import express from "express";
-import { verifyToken } from "../authMiddleware.js";
+import { verifyToken } from "../utils/authMiddleware.js";
 import {
   getVehicles,
   addVehicle,

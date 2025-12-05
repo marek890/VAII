@@ -1,6 +1,5 @@
-import "./App.css";
 import { Routes, Route } from "react-router-dom";
-import Header from "./Header";
+import Header from "./utils/Header";
 import Login from "./forms/Login";
 import Register from "./forms/Register";
 import Vehicles from "./pages/Vehicles";

@@ -22,9 +22,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": [
-    "vite.config.ts",
-    "prisma/**/*.ts",
-    "src/generated/prisma/**/*.ts"
-  ]
+  "include": ["vite.config.ts", "prisma/**/*.ts"]
 }
