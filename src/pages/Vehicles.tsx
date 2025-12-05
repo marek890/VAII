@@ -1,13 +1,19 @@
 import { useState, useEffect } from "react";
+import { IoCar } from "react-icons/io5";
 
 function Vehicles() {
   const [vehicles, setVehicles] = useState([]);
   const [selectedVehicle, setSelectedVehicle] = useState<any>(null);
+  const [vehicleToDelete, setVehicleToDelete] = useState<number | null>(null);
 
   const [brand, setBrand] = useState("");
   const [model, setModel] = useState("");
-  const [year, setYear] = useState("");
+  const [licensePlate, setLicensePlate] = useState("");
+  const [year, setYear] = useState<number | "">("");
   const [vin, setVin] = useState("");
+  const [fuelType, setFuelType] = useState("");
+  const [mileage, setMileage] = useState<number | "">("");
+  const [color, setColor] = useState("");
 
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"error" | "success">(
@@ -35,22 +41,31 @@ function Vehicles() {
   const resetForm = () => {
     setBrand("");
     setModel("");
+    setLicensePlate("");
     setYear("");
     setVin("");
+    setFuelType("");
+    setMileage("");
+    setColor("");
     setSelectedVehicle(null);
+  };
+
+  const validateInputs = () => {
+    if (!brand || !model || !fuelType) {
+      setMessageType("error");
+      setMessage("Značka, model a typ paliva sú povinné.");
+      return false;
+    }
+    return true;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!brand || !model || !year || !vin) {
-      setMessageType("error");
-      setMessage("Vyplň všetky údaje.");
-      return;
-    }
+    if (!validateInputs()) return;
 
     const url = selectedVehicle
-      ? `http://localhost:5000/api/vehicles/${selectedVehicle.id}`
+      ? `http://localhost:5000/api/vehicles/${selectedVehicle.car_id}`
       : "http://localhost:5000/api/vehicles";
 
     const method = selectedVehicle ? "PUT" : "POST";
@@ -62,14 +77,23 @@ function Vehicles() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ brand, model, year, vin }),
+        body: JSON.stringify({
+          brand,
+          model,
+          license_plate: licensePlate || null,
+          year: year || null,
+          vin: vin || null,
+          fuel_type: fuelType,
+          mileage: mileage || null,
+          color: color || null,
+        }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
         setMessageType("error");
-        setMessage(data.error || "Chyba pri ukladaní vozidla.");
+        setMessage(data.message || "Chyba pri ukladaní vozidla.");
         return;
       }
 
@@ -86,67 +110,122 @@ function Vehicles() {
     }
   };
 
-  const deleteVehicle = async (id: number) => {
-    if (!confirm("Naozaj chceš odstrániť toto vozidlo?")) return;
+  const confirmDeleteVehicle = (car_id: number) => {
+    setVehicleToDelete(car_id);
+  };
+
+  const handleDelete = async () => {
+    if (!vehicleToDelete) return;
 
     try {
-      await fetch(`http://localhost:5000/api/vehicles/${id}`, {
+      await fetch(`http://localhost:5000/api/vehicles/${vehicleToDelete}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
-
+      setVehicleToDelete(null);
       fetchVehicles();
     } catch (err) {
       console.log(err);
     }
   };
 
+  const cancelDelete = () => setVehicleToDelete(null);
+
   const startEdit = (vehicle: any) => {
     setSelectedVehicle(vehicle);
     setBrand(vehicle.brand);
     setModel(vehicle.model);
-    setYear(vehicle.year);
-    setVin(vehicle.vin);
+    setLicensePlate(vehicle.license_plate || "");
+    setYear(vehicle.year || "");
+    setVin(vehicle.vin || "");
+    setFuelType(vehicle.fuel_type || "");
+    setMileage(vehicle.mileage || "");
+    setColor(vehicle.color || "");
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#d8f5d8] via-[#b8f0b8] to-[#78e778] px-4 py-10">
-      <div className="bg-white p-6 sm:p-8 rounded-xl shadow-xl/25 w-full max-w-2xl">
-        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-6">
-          Správa vozidiel
-        </h2>
+    <div className="min-h-screen bg-gradient-to-b from-[#d8f5d8] via-[#b8f0b8] to-[#78e778] px-4 py-10">
+      <div className="max-w-6xl mx-auto py-10">
+        <div className="bg-white p-4 rounded-xl shadow-xl/25 mb-10 max-w-2xl mx-auto ">
+          <h2 className="text-3xl font-bold text-gray-900 text-center">
+            Správa vozidiel
+          </h2>
+        </div>
+        <form
+          className="bg-white p-6 rounded-xl shadow-xl/25 mb-10 max-w-2xl mx-auto"
+          onSubmit={handleSubmit}
+        >
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">
+            {selectedVehicle ? "Upraviť vozidlo" : "Pridať nové vozidlo"}
+          </h3>
 
-        <form className="space-y-4 sm:space-y-6" onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
             <input
               type="text"
-              placeholder="Značka (Škoda)"
+              placeholder="Značka"
               value={brand}
               onChange={(e) => setBrand(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#78e778] text-black"
             />
             <input
               type="text"
-              placeholder="Model (Octavia)"
+              placeholder="Model"
               value={model}
               onChange={(e) => setModel(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#78e778] text-black"
             />
+            <select
+              value={fuelType}
+              onChange={(e) => setFuelType(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#78e778] text-black bg-white"
+            >
+              <option value="">Vyber typ paliva</option>
+              <option value="Benzín">Benzín</option>
+              <option value="Nafta">Nafta</option>
+            </select>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
             <input
-              type="number"
-              placeholder="Rok (napr. 2018)"
-              value={year}
-              onChange={(e) => setYear(e.target.value)}
+              type="text"
+              placeholder="ŠPZ"
+              value={licensePlate}
+              onChange={(e) => setLicensePlate(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#78e778] text-black"
             />
+            <input
+              type="text"
+              placeholder="Rok výroby"
+              value={year}
+              onChange={(e) =>
+                setYear(e.target.value ? parseInt(e.target.value) : "")
+              }
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#78e778] text-black"
+            />
+            <input
+              type="text"
+              placeholder="Najazdené km"
+              value={mileage}
+              onChange={(e) =>
+                setMileage(e.target.value ? parseInt(e.target.value) : "")
+              }
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#78e778] text-black"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
             <input
               type="text"
               placeholder="VIN"
               value={vin}
               onChange={(e) => setVin(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#78e778] text-black"
+            />
+            <input
+              type="text"
+              placeholder="Farba"
+              value={color}
+              onChange={(e) => setColor(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#78e778] text-black"
             />
           </div>
@@ -169,40 +248,73 @@ function Vehicles() {
           )}
         </form>
 
-        <h3 className="text-xl font-bold text-gray-800 mt-8">Moje vozidlá</h3>
-
-        <div className="mt-4 space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {vehicles.length === 0 ? (
-            <p className="text-gray-500 text-center">Žiadne vozidlá zatiaľ.</p>
+            <p className="text-gray-700 col-span-full text-center">
+              Žiadne vozidlá zatiaľ.
+            </p>
           ) : (
             vehicles.map((v: any) => (
               <div
-                key={v.id}
-                className="p-4 rounded-lg border shadow-sm flex items-center justify-between bg-gray-50"
+                key={v.car_id}
+                className="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-200"
               >
-                <div>
-                  <p className="font-semibold text-gray-700">
-                    {v.brand} {v.model}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Rok: {v.year} | VIN: {v.vin}
-                  </p>
+                <div className="bg-[#78e778] h-12 flex items-center px-4">
+                  <IoCar className="text-2xl text-white mr-3" />
+                  <h4 className="text-white font-bold text-lg">
+                    {v.brand} {v.model} ({v.year || "—"})
+                  </h4>
                 </div>
 
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => startEdit(v)}
-                    className="px-3 py-1 text-sm bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200"
-                  >
-                    Upraviť
-                  </button>
+                <div className="p-4 space-y-2">
+                  <p className="text-gray-600 font-medium">
+                    ŠPZ: {v.license_plate || "—"}
+                  </p>
+                  <p className="text-gray-600 font-medium">
+                    VIN: {v.vin || "—"}
+                  </p>
+                  <p className="text-gray-600 font-medium">
+                    Palivo: {v.fuel_type || "—"}
+                  </p>
+                  <p className="text-gray-600 font-medium">
+                    Farba: {v.color || "—"}
+                  </p>
+                  <p className="text-gray-600 font-medium">
+                    Najazdené km: {v.mileage || "—"}
+                  </p>
 
-                  <button
-                    onClick={() => deleteVehicle(v.id)}
-                    className="px-3 py-1 text-sm bg-red-100 text-red-600 rounded-lg hover:bg-red-200"
-                  >
-                    Odstrániť
-                  </button>
+                  <div className="flex gap-2 mt-4">
+                    <button
+                      onClick={() => startEdit(v)}
+                      className="flex-1 px-3 py-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 font-medium"
+                    >
+                      Upraviť
+                    </button>
+
+                    {vehicleToDelete === v.car_id ? (
+                      <div className="flex gap-2 flex-1">
+                        <button
+                          onClick={handleDelete}
+                          className="flex-1 px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium"
+                        >
+                          Potvrdiť
+                        </button>
+                        <button
+                          onClick={cancelDelete}
+                          className="flex-1 px-3 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-medium"
+                        >
+                          Zrušiť
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => confirmDeleteVehicle(v.car_id)}
+                        className="flex-1 px-3 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 font-medium"
+                      >
+                        Odstrániť
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             ))
