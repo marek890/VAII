@@ -1,4 +1,5 @@
 import { pool } from "../db.js";
+import { validateVehicleData } from "../utils/validators.js";
 
 export const getVehicles = async (req, res) => {
   try {
@@ -14,13 +15,13 @@ export const getVehicles = async (req, res) => {
 };
 
 export const addVehicle = async (req, res) => {
+  const errors = validateVehicleData(req.body);
+  if (errors.length > 0) {
+    return res.status(400).json({ message: errors.join(" ") });
+  }
+
   const { brand, model, license_plate, year, vin, fuel_type, mileage, color } =
     req.body;
-
-  if (!brand || !model || !fuel_type)
-    return res
-      .status(400)
-      .json({ message: "Vyplň povinné údaje: značku, model a typ paliva." });
 
   try {
     const result = await pool.query(
@@ -48,14 +49,14 @@ export const addVehicle = async (req, res) => {
 };
 
 export const updateVehicle = async (req, res) => {
+  const errors = validateVehicleData(req.body);
+  if (errors.length > 0) {
+    return res.status(400).json({ message: errors.join(" ") });
+  }
+
   const { id } = req.params;
   const { brand, model, license_plate, year, vin, fuel_type, mileage, color } =
     req.body;
-
-  if (!brand || !model || !fuel_type)
-    return res
-      .status(400)
-      .json({ message: "Vyplň povinné údaje: značku, model a typ paliva." });
 
   try {
     const result = await pool.query(

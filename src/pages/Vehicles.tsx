@@ -9,10 +9,10 @@ function Vehicles() {
   const [brand, setBrand] = useState("");
   const [model, setModel] = useState("");
   const [licensePlate, setLicensePlate] = useState("");
-  const [year, setYear] = useState<number | "">("");
+  const [year, setYear] = useState("");
   const [vin, setVin] = useState("");
   const [fuelType, setFuelType] = useState("");
-  const [mileage, setMileage] = useState<number | "">("");
+  const [mileage, setMileage] = useState("");
   const [color, setColor] = useState("");
 
   const [message, setMessage] = useState("");
@@ -51,11 +51,54 @@ function Vehicles() {
   };
 
   const validateInputs = () => {
+    const currentYear = new Date().getFullYear();
+
     if (!brand || !model || !fuelType) {
       setMessageType("error");
       setMessage("Značka, model a typ paliva sú povinné.");
       return false;
     }
+
+    if (year) {
+      const yearNum = Number(year);
+      if (isNaN(yearNum)) {
+        setMessageType("error");
+        setMessage("Rok výroby musí byť číslo.");
+        return false;
+      }
+      if (yearNum < 1900 || yearNum > currentYear) {
+        setMessageType("error");
+        setMessage(`Rok výroby musí byť medzi 1900 a ${currentYear}.`);
+        return false;
+      }
+    }
+
+    if (mileage) {
+      const mileageNum = Number(mileage);
+      if (isNaN(mileageNum)) {
+        setMessageType("error");
+        setMessage("Najazdené km musí byť číslo.");
+        return false;
+      }
+      if (mileageNum < 0) {
+        setMessageType("error");
+        setMessage("Najazdené km nemôžu byť záporné.");
+        return false;
+      }
+    }
+
+    if (vin && vin.length !== 17) {
+      setMessageType("error");
+      setMessage("VIN musí mať presne 17 znakov.");
+      return false;
+    }
+
+    if (licensePlate && licensePlate.length < 5) {
+      setMessageType("error");
+      setMessage("ŠPZ musí mať aspoň 5 znakov.");
+      return false;
+    }
+
     return true;
   };
 
@@ -197,18 +240,15 @@ function Vehicles() {
               type="text"
               placeholder="Rok výroby"
               value={year}
-              onChange={(e) =>
-                setYear(e.target.value ? parseInt(e.target.value) : "")
-              }
+              onChange={(e) => setYear(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#78e778] focus:outline-none text-black"
             />
+
             <input
               type="text"
               placeholder="Najazdené km"
               value={mileage}
-              onChange={(e) =>
-                setMileage(e.target.value ? parseInt(e.target.value) : "")
-              }
+              onChange={(e) => setMileage(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#78e778] focus:outline-none text-black"
             />
           </div>
