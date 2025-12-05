@@ -165,19 +165,19 @@ function Vehicles() {
               placeholder="Značka"
               value={brand}
               onChange={(e) => setBrand(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#78e778] text-black"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#78e778] focus:outline-none text-black"
             />
             <input
               type="text"
               placeholder="Model"
               value={model}
               onChange={(e) => setModel(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#78e778] text-black"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#78e778] focus:outline-none text-black"
             />
             <select
               value={fuelType}
               onChange={(e) => setFuelType(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#78e778] text-black bg-white"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#78e778] focus:outline-none text-black bg-white"
             >
               <option value="">Vyber typ paliva</option>
               <option value="Benzín">Benzín</option>
@@ -191,7 +191,7 @@ function Vehicles() {
               placeholder="ŠPZ"
               value={licensePlate}
               onChange={(e) => setLicensePlate(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#78e778] text-black"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#78e778] focus:outline-none text-black"
             />
             <input
               type="text"
@@ -200,7 +200,7 @@ function Vehicles() {
               onChange={(e) =>
                 setYear(e.target.value ? parseInt(e.target.value) : "")
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#78e778] text-black"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#78e778] focus:outline-none text-black"
             />
             <input
               type="text"
@@ -209,7 +209,7 @@ function Vehicles() {
               onChange={(e) =>
                 setMileage(e.target.value ? parseInt(e.target.value) : "")
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#78e778] text-black"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#78e778] focus:outline-none text-black"
             />
           </div>
 
@@ -219,14 +219,14 @@ function Vehicles() {
               placeholder="VIN"
               value={vin}
               onChange={(e) => setVin(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#78e778] text-black"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#78e778] focus:outline-none text-black"
             />
             <input
               type="text"
               placeholder="Farba"
               value={color}
               onChange={(e) => setColor(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#78e778] text-black"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#78e778] focus:outline-none text-black"
             />
           </div>
 
