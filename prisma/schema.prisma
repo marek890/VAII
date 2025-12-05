@@ -42,16 +42,21 @@ model Status {
 }
 
 model Car {
-  car_id  Int    @id @default(autoincrement())
-  brand   String
-  model   String
-  license_plate String
-  
-  user_id Int
-  user    User   @relation(fields: [user_id], references: [user_id])
+  car_id        Int       @id @default(autoincrement())
+  brand         String
+  model         String
+  license_plate String?
+  year          Int?
+  vin           String?
+  fuel_type     String
+  mileage       Int?
+  color         String?
+  user_id       Int
+  user          User        @relation(fields: [user_id], references: [user_id])
 
-  appointments Appointment[]
+  appointments  Appointment[]
 }
+
 
 model Service {
   service_id Int    @id @default(autoincrement())

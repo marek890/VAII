@@ -3,6 +3,8 @@ import { Routes, Route } from "react-router-dom";
 import Header from "./Header";
 import Login from "./forms/Login";
 import Register from "./forms/Register";
+import Vehicles from "./pages/Vehicles";
+
 function App() {
   return (
     <>
@@ -11,6 +13,7 @@ function App() {
         <Route path="/" />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/vehicles" element={<Vehicles />} />
       </Routes>
     </>
   );

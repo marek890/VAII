@@ -31,7 +31,7 @@ function Header() {
           className="text-4xl tracking-tight text-gray-500 hover:text-[#78E778] transition-all duration-200 flex items-center"
         >
           <IoCar className="mr-1" />
-          VAIIServis
+          VajkoServis
         </Link>
 
         <ul className="hidden md:flex items-center space-x-6 text-lg">
@@ -78,7 +78,7 @@ function Header() {
             </button>
 
             {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-xl border p-2 z-50 text-gray-600">
+              <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-xl p-2 z-50 text-gray-600">
                 <Link
                   to="/profile"
                   className="block px-4 py-2 rounded-lg hover:bg-gray-100"
