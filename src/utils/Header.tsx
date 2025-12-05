@@ -7,6 +7,7 @@ import { IoCar } from "react-icons/io5";
 function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileDropdown, setMobileDropdown] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
@@ -14,98 +15,72 @@ function Header() {
   }, []);
 
   const toggleMenu = () => setIsOpen(!isOpen);
-  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     setIsLoggedIn(false);
     setDropdownOpen(false);
+    setMobileDropdown(false);
     window.location.href = "/login";
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full bg-white/90 border-b border-gray-200 px-6 py-3 shadow-md z-50">
+    <nav className="header-nav">
       <div className="flex justify-between items-center w-full">
-        <Link
-          to="/"
-          className="text-4xl tracking-tight text-gray-500 hover:text-[#78E778] transition-all duration-200 flex items-center"
-        >
+        <Link to="/" className="header-logo">
           <IoCar className="mr-1" />
           VajkoServis
         </Link>
 
-        <ul className="hidden md:flex items-center space-x-6 text-lg">
+        <ul className="nav-list hidden md:flex">
           <li>
-            <Link
-              to="/"
-              className="inline-block px-4 py-2 rounded-lg bg-gray-100 text-gray-500 font-medium transition-all duration-200 hover:shadow-md hover:text-[#78E778]"
-            >
+            <Link to="/" className="nav-link">
               Domov
             </Link>
           </li>
           <li>
-            <Link
-              to="/reservation"
-              className="inline-block px-4 py-2 rounded-lg bg-gray-100 text-gray-500 font-medium transition-all duration-200 hover:shadow-md hover:text-[#78E778]"
-            >
+            <Link to="/reservation" className="nav-link">
               Rezervácia
             </Link>
           </li>
           <li>
-            <Link
-              to="/contact"
-              className="inline-block px-4 py-2 rounded-lg bg-gray-100 text-gray-500 font-medium transition-all duration-200 hover:shadow-md hover:text-[#78E778]"
-            >
+            <Link to="/contact" className="nav-link">
               Kontakt
             </Link>
           </li>
         </ul>
 
-        {!isLoggedIn ? (
-          <Link
-            to="/login"
-            className="hidden md:inline-block px-6 py-2.5 rounded-xl bg-gray-100 text-gray-500 font-semibold transition-all duration-200 hover:bg-[#78E778] hover:text-white hover:shadow-lg"
-          >
-            Prihlásiť sa
-          </Link>
-        ) : (
+        {isLoggedIn ? (
           <div className="hidden md:block relative">
             <button
-              onClick={toggleDropdown}
-              className="px-4 py-2 rounded-xl bg-gray-100 text-gray-600 font-semibold hover:bg-[#78E778] hover:text-white transition-all duration-200"
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+              className="account-btn"
             >
               Môj účet ▾
             </button>
 
             {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-xl p-2 z-50 text-gray-600">
-                <Link
-                  to="/profile"
-                  className="block px-4 py-2 rounded-lg hover:bg-gray-100"
-                  onClick={() => setDropdownOpen(false)}
-                >
+              <div className="dropdown-menu">
+                <Link to="/profile" className="dropdown-item">
                   Profil
                 </Link>
-                <Link
-                  to="/vehicles"
-                  className="block px-4 py-2 rounded-lg hover:bg-gray-100"
-                  onClick={() => setDropdownOpen(false)}
-                >
+                <Link to="/vehicles" className="dropdown-item">
                   Vozidlá
                 </Link>
-                <button
-                  onClick={handleLogout}
-                  className="w-full text-left px-4 py-2 rounded-lg hover:bg-red-100 text-red-500"
-                >
+                <button onClick={handleLogout} className="logout-btn">
                   Odhlásiť sa
                 </button>
               </div>
             )}
           </div>
+        ) : (
+          <Link to="/login" className="account-btn hidden md:inline-block">
+            Prihlásiť sa
+          </Link>
         )}
 
         <button
-          className="md:hidden text-2xl text-gray-500"
+          className="md:hidden text-2xl text-gray-600"
           onClick={toggleMenu}
         >
           {isOpen ? <FiX /> : <FiMenu />}
@@ -113,79 +88,66 @@ function Header() {
       </div>
 
       {isOpen && (
-        <ul className="flex flex-col mt-3 space-y-2 md:hidden pb-4">
-          <li>
-            <Link
-              to="/"
-              className="block px-4 py-2 rounded-lg bg-gray-100 text-gray-500 hover:bg-[#78E778] hover:text-white transition-all duration-200"
-              onClick={toggleMenu}
-            >
-              Domov
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/reservation"
-              className="block px-4 py-2 rounded-lg bg-gray-100 text-gray-500 hover:bg-[#78E778] hover:text-white transition-all duration-200"
-              onClick={toggleMenu}
-            >
-              Rezervácia
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/contact"
-              className="block px-4 py-2 rounded-lg bg-gray-100 text-gray-500 hover:bg-[#78E778] hover:text-white transition-all duration-200"
-              onClick={toggleMenu}
-            >
-              Kontakt
-            </Link>
-          </li>
-
-          {!isLoggedIn ? (
+        <div className="mt-3 md:hidden bg-white p-4 rounded-xl shadow-lg">
+          <ul className="flex flex-col gap-3">
             <li>
-              <Link
-                to="/login"
-                className="block px-4 py-2 rounded-xl bg-gray-100 text-gray-500 hover:bg-[#78E778] hover:text-white transition-all duration-200"
-                onClick={toggleMenu}
-              >
-                Prihlásiť sa
+              <Link to="/" className="nav-link w-full text-center">
+                Domov
               </Link>
             </li>
+            <li>
+              <Link to="/reservation" className="nav-link w-full text-center">
+                Rezervácia
+              </Link>
+            </li>
+            <li>
+              <Link to="/contact" className="nav-link w-full text-center">
+                Kontakt
+              </Link>
+            </li>
+          </ul>
+
+          {isLoggedIn ? (
+            <div className="mt-4">
+              <button
+                onClick={() => setMobileDropdown(!mobileDropdown)}
+                className="account-btn w-full text-center"
+              >
+                Môj účet ▾
+              </button>
+
+              {mobileDropdown && (
+                <div className="mt-2 w-full bg-gray-50 shadow-sm rounded-xl flex flex-col overflow-hidden">
+                  <Link
+                    to="/profile"
+                    className="dropdown-item py-3 text-center"
+                  >
+                    Profil
+                  </Link>
+                  <Link
+                    to="/vehicles"
+                    className="dropdown-item py-3 text-center"
+                  >
+                    Vozidlá
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="logout-btn py-3 text-center"
+                  >
+                    Odhlásiť sa
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
-            <>
-              <li>
-                <Link
-                  to="/profile"
-                  className="block px-4 py-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  onClick={toggleMenu}
-                >
-                  Profil
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/vehicles"
-                  className="block px-4 py-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  onClick={toggleMenu}
-                >
-                  Vozidlá
-                </Link>
-              </li>
-              <li>
-                <button
-                  onClick={() => {
-                    toggleMenu();
-                    handleLogout();
-                  }}
-                  className="block w-full text-left px-4 py-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200"
-                >
-                  Odhlásiť sa
-                </button>
-              </li>
-            </>
+            <Link
+              to="/login"
+              className="account-btn w-full block text-center mt-4"
+            >
+              Prihlásiť sa
+            </Link>
           )}
-        </ul>
+        </div>
       )}
     </nav>
   );

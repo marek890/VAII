@@ -189,7 +189,7 @@ function Vehicles() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#d8f5d8] via-[#b8f0b8] to-[#78e778] px-4 py-10">
       <div className="max-w-6xl mx-auto py-10">
-        <div className="bg-white p-4 rounded-xl shadow-xl/25 mb-10 max-w-2xl mx-auto ">
+        <div className="bg-white p-4 rounded-xl shadow-xl/25 mb-10 mt-5 max-w-2xl mx-auto ">
           <h2 className="text-3xl font-bold text-gray-900 text-center">
             Správa vozidiel
           </h2>
