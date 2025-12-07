@@ -2,9 +2,11 @@ services:
   frontend:
     build:
       context: .
-    volumes:
-      - .:/usr/src/app
     image: vaii-frontend
+    volumes:
+      - .:/usr/src/app:delegated
+      - /usr/src/app/node_modules
+    working_dir: /usr/src/app
     environment:
       - CHOKIDAR_USEPOLLING=true
     ports:
@@ -15,11 +17,12 @@ services:
   backend:
     build:
       context: ./server
+    image: vaii-backend
     command: ["npm", "run", "dev"]
     volumes:
-      - ./server:/app
+      - ./server:/app:delegated
       - /app/node_modules
-    image: vaii-backend
+    working_dir: /app
     env_file:
       - ./server/.env
     ports:
