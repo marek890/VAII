@@ -24,7 +24,7 @@ function Vehicles() {
 
   const fetchVehicles = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/vehicles", {
+      const res = await fetch("http://localhost:5001/api/vehicles", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -108,8 +108,8 @@ function Vehicles() {
     if (!validateInputs()) return;
 
     const url = selectedVehicle
-      ? `http://localhost:5000/api/vehicles/${selectedVehicle.car_id}`
-      : "http://localhost:5000/api/vehicles";
+      ? `http://localhost:5001/api/vehicles/${selectedVehicle.car_id}`
+      : "http://localhost:5001/api/vehicles";
 
     const method = selectedVehicle ? "PUT" : "POST";
 
@@ -161,7 +161,7 @@ function Vehicles() {
     if (!vehicleToDelete) return;
 
     try {
-      await fetch(`http://localhost:5000/api/vehicles/${vehicleToDelete}`, {
+      await fetch(`http://localhost:5001/api/vehicles/${vehicleToDelete}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
