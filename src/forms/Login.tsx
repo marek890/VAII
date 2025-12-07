@@ -79,6 +79,7 @@ function Login() {
               Email
             </label>
             <input
+              required
               type="email"
               id="email"
               placeholder="tvoj@email.sk"
@@ -103,6 +104,7 @@ function Login() {
               Heslo
             </label>
             <input
+              required
               type="password"
               id="password"
               placeholder="••••••••••"
