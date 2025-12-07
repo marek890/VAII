@@ -54,7 +54,8 @@ function Register() {
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setEmail(value);
-    setEmailError(!value.includes("@") ? "Zadaj platný e-mail" : "");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    setEmailError(!emailRegex.test(value) ? "Zadaj platný e-mail" : "");
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,6 +92,7 @@ function Register() {
               E-mail
             </label>
             <input
+              required
               type="email"
               id="email"
               placeholder="tvoj@email.sk"
@@ -115,6 +117,7 @@ function Register() {
               Heslo
             </label>
             <input
+              required
               type="password"
               id="password"
               placeholder="••••••••••"
@@ -139,6 +142,7 @@ function Register() {
               Potvrď heslo
             </label>
             <input
+              required
               type="password"
               id="confirmPassword"
               placeholder="••••••••••"

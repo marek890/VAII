@@ -4,11 +4,12 @@ import { pool } from "../db.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES = "1h";
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export const registerUser = async (req, res) => {
   const { email, password } = req.body;
 
-  if (!email || !email.includes("@") || !password || password.length < 8) {
+  if (!email || !emailRegex.test(email) || !password || password.length < 8) {
     return res.status(400).json({ error: "Neplatný email alebo heslo" });
   }
 
@@ -32,7 +33,7 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
-  if (!email || !email.includes("@") || !password || password.length < 8) {
+  if (!email || !emailRegex.test(email) || !password || password.length < 8) {
     return res.status(400).json({ error: "Neplatný email alebo heslo" });
   }
 

@@ -54,7 +54,8 @@ function Login() {
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setEmail(value);
-    setEmailError(!value.includes("@") ? "Zadaj platný e-mail" : "");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    setEmailError(!emailRegex.test(value) ? "Zadaj platný e-mail" : "");
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
