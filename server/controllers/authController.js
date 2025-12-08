@@ -9,8 +9,12 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const registerUser = async (req, res) => {
   const { email, password } = req.body;
 
-  if (!email || !emailRegex.test(email) || !password || password.length < 8) {
-    return res.status(400).json({ error: "Neplatný email alebo heslo" });
+  if (!email || !emailRegex.test(email)) {
+    return res.status(400).json({ error: "Neplatný email" });
+  }
+
+  if (!password || password.length < 8) {
+    return res.status(400).json({ error: "Neplatné heslo" });
   }
 
   try {
@@ -33,8 +37,12 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
-  if (!email || !emailRegex.test(email) || !password || password.length < 8) {
-    return res.status(400).json({ error: "Neplatný email alebo heslo" });
+  if (!email || !emailRegex.test(email)) {
+    return res.status(400).json({ error: "Neplatný email" });
+  }
+
+  if (!password || password.length < 8) {
+    return res.status(400).json({ error: "Neplatné heslo" });
   }
 
   try {
