@@ -24,7 +24,7 @@ function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#d8f5d8] via-[#b8f0b8] to-[#78e778] px-4 py-10 mt-20">
+    <div className="min-h-screen bg-linear-to-b from-[#d8f5d8] via-[#b8f0b8] to-[#78e778] px-4 py-10 mt-20">
       <div className="max-w-6xl mx-auto">
         <div className="bg-white p-8 rounded-2xl shadow-xl/20 mb-10 text-center">
           <h1 className="text-4xl font-bold text-gray-900 mb-3">Vitajte</h1>

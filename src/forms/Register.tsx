@@ -107,7 +107,7 @@ function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#d8f5d8] via-[#b8f0b8] to-[#78e778] px-4 sm:px-6 overflow-auto">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-b from-[#d8f5d8] via-[#b8f0b8] to-[#78e778] px-4 sm:px-6 overflow-auto">
       <div className="bg-white p-6 sm:p-8 rounded-xl shadow-xl/25 w-full max-w-md mt-30 mb-10">
         <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-6">
           Registrácia

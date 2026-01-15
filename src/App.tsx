@@ -5,6 +5,7 @@ import Register from "./forms/Register";
 import Vehicles from "./pages/Vehicles";
 import Home from "./pages/Home";
 import ProtectedRoute from "./utils/ProtectedRoute";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -19,6 +20,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Vehicles />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
             </ProtectedRoute>
           }
         />
