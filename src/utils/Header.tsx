@@ -29,7 +29,7 @@ function Header() {
       <div className="flex justify-between items-center w-full">
         <Link to="/" className="header-logo">
           <IoCar className="mr-1" />
-          VajkoServis
+          Vajko
         </Link>
 
         <ul className="nav-list hidden md:flex">

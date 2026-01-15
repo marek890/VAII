@@ -8,6 +8,9 @@ function Register() {
     }
   }, []);
 
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -16,6 +19,9 @@ function Register() {
     "success"
   );
 
+  const [firstNameError, setFirstNameError] = useState("");
+  const [lastNameError, setLastNameError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmError, setConfirmError] = useState("");
@@ -29,7 +35,7 @@ function Register() {
       const res = await fetch("http://localhost:5001/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ firstName, lastName, phone, email, password }),
       });
 
       const data = await res.json();
@@ -49,6 +55,30 @@ function Register() {
       setMessageType("error");
       setMessage("Nepodarilo sa spojiť so serverom.");
     }
+  };
+
+  const handleFirstNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setFirstName(value);
+    setFirstNameError(value.length < 2 ? "Meno musí mať aspoň 2 znaky" : "");
+  };
+
+  const handleLastNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setLastName(value);
+    setLastNameError(
+      value.length < 2 ? "Priezvisko musí mať aspoň 2 znaky" : ""
+    );
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPhone(value);
+
+    const phoneRegex = /^(\+421|0)\d{9}$/;
+    setPhoneError(
+      value && !phoneRegex.test(value) ? "Zadaj platné telefónne číslo" : ""
+    );
   };
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,12 +108,73 @@ function Register() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#d8f5d8] via-[#b8f0b8] to-[#78e778] px-4 sm:px-6 overflow-auto">
-      <div className="bg-white p-6 sm:p-8 rounded-xl shadow-xl/25 w-full max-w-md">
+      <div className="bg-white p-6 sm:p-8 rounded-xl shadow-xl/25 w-full max-w-md mt-30 mb-10">
         <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-6">
           Registrácia
         </h2>
 
         <form className="space-y-4 sm:space-y-6" onSubmit={handleSubmit}>
+          <div>
+            <label className="block text-gray-700 font-medium mb-1">Meno</label>
+            <input
+              required
+              type="text"
+              id="firstname"
+              placeholder="Jožko"
+              value={firstName}
+              onChange={handleFirstNameChange}
+              className={`w-full px-4 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#78e778] text-black ${
+                firstNameError
+                  ? "border-red-500 focus:ring-red-500 text-red-600"
+                  : ""
+              }`}
+            />
+            <p className="text-red-500 text-sm mt-1">
+              {firstNameError || "\u00A0"}
+            </p>
+          </div>
+          <div>
+            <label className="block text-gray-700 font-medium mb-1">
+              Priezvisko
+            </label>
+            <input
+              required
+              type="text"
+              id="lastname"
+              placeholder="Mrkvička"
+              value={lastName}
+              onChange={handleLastNameChange}
+              className={`w-full px-4 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#78e778] text-black ${
+                lastNameError
+                  ? "border-red-500 focus:ring-red-500 text-red-600"
+                  : ""
+              }`}
+            />
+            <p className="text-red-500 text-sm mt-1">
+              {lastNameError || "\u00A0"}
+            </p>
+          </div>
+          <div>
+            <label className="block text-gray-700 font-medium mb-1">
+              Telefónne číslo
+            </label>
+            <input
+              required
+              type="text"
+              id="phonenumber"
+              placeholder="+421 123 456 789"
+              value={phone}
+              onChange={handlePhoneChange}
+              className={`w-full px-4 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#78e778] text-black ${
+                phoneError
+                  ? "border-red-500 focus:ring-red-500 text-red-600"
+                  : ""
+              }`}
+            />
+            <p className="text-red-500 text-sm mt-1">
+              {phoneError || "\u00A0"}
+            </p>
+          </div>
           <div>
             <label
               htmlFor="email"

@@ -33,7 +33,6 @@ services:
   postgres:
     image: postgres:16
     container_name: postgres-db
-    restart: always
     env_file:
       - ./server/.env
     ports:
