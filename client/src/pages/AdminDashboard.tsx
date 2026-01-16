@@ -42,6 +42,9 @@ function AdminDashboard() {
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
+  const [userSearch, setUserSearch] = useState("");
+  const [carSearch, setCarSearch] = useState("");
+  const [appointmentSearch, setAppointmentSearch] = useState("");
 
   const fetchUsers = async () => {
     const res = await fetch("http://localhost:5001/api/admin/users", {
@@ -113,6 +116,33 @@ function AdminDashboard() {
     const matchesDateTo = !dateTo || appointmentDate <= dateTo;
     return matchesStatus && matchesDateFrom && matchesDateTo;
   });
+  const filteredUsers = users.filter(
+    (u) =>
+      u.name.toLowerCase().includes(userSearch.toLowerCase()) ||
+      u.email.toLowerCase().includes(userSearch.toLowerCase()) ||
+      u.role.toLowerCase().includes(userSearch.toLowerCase())
+  );
+
+  const filteredCars = cars.filter(
+    (c) =>
+      c.brand.toLowerCase().includes(carSearch.toLowerCase()) ||
+      c.model.toLowerCase().includes(carSearch.toLowerCase()) ||
+      c.license_plate.toLowerCase().includes(carSearch.toLowerCase()) ||
+      c.owner_name.toLowerCase().includes(carSearch.toLowerCase())
+  );
+
+  const filteredAppointmentsWithSearch = filteredAppointments.filter(
+    (a) =>
+      a.brand.toLowerCase().includes(appointmentSearch.toLowerCase()) ||
+      a.model.toLowerCase().includes(appointmentSearch.toLowerCase()) ||
+      a.license_plate.toLowerCase().includes(appointmentSearch.toLowerCase()) ||
+      a.customer_name.toLowerCase().includes(appointmentSearch.toLowerCase()) ||
+      a.services.some((s) =>
+        s.service_name.toLowerCase().includes(appointmentSearch.toLowerCase())
+      ) ||
+      (a.notes?.toLowerCase().includes(appointmentSearch.toLowerCase()) ??
+        false)
+  );
 
   return (
     <div className="min-h-screen bg-linear-to-b mt-5 from-[#d8f5d8] via-[#b8f0b8] to-[#78e778] px-4 py-10">
@@ -155,6 +185,15 @@ function AdminDashboard() {
 
         {activeTab === "users" && (
           <div className="bg-white rounded-2xl shadow-xl p-6 overflow-x-auto">
+            <div className="mb-3">
+              <input
+                type="text"
+                placeholder="Vyhľadať používateľa..."
+                value={userSearch}
+                onChange={(e) => setUserSearch(e.target.value)}
+                className="w-full px-5 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#78e778] focus:outline-none shadow-sm placeholder-gray-400 transition-all duration-200 hover:shadow-md"
+              />
+            </div>
             <table className="min-w-full">
               <thead className="bg-gray-200">
                 <tr>
@@ -165,7 +204,7 @@ function AdminDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {users.map((u) => (
+                {filteredUsers.map((u) => (
                   <tr key={u.user_id} className="border-b">
                     <td className="p-2">
                       <input
@@ -219,7 +258,16 @@ function AdminDashboard() {
 
         {activeTab === "cars" && (
           <div className="bg-white rounded-2xl shadow-xl p-6 overflow-x-auto">
-            <table className="min-w-full">
+            <div className="mb-3">
+              <input
+                type="text"
+                placeholder="Vyhľadať vozidlo..."
+                value={carSearch}
+                onChange={(e) => setCarSearch(e.target.value)}
+                className="w-full px-5 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#78e778] focus:outline-none shadow-sm placeholder-gray-400 transition-all duration-200 hover:shadow-md"
+              />
+            </div>
+            <table className="min-w-full table-fixed text-center">
               <thead className="bg-gray-200">
                 <tr>
                   <th className="p-3">Značka</th>
@@ -229,7 +277,7 @@ function AdminDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {cars.map((c) => (
+                {filteredCars.map((c) => (
                   <tr key={c.car_id} className="border-b">
                     <td className="p-2">{c.brand}</td>
                     <td className="p-2">{c.model}</td>
@@ -245,6 +293,15 @@ function AdminDashboard() {
         {activeTab === "appointments" && (
           <div className="bg-white rounded-2xl shadow-xl p-6">
             <div className="flex flex-wrap gap-4 mb-4 items-center">
+              <div className="mb-3">
+                <input
+                  type="text"
+                  placeholder="Vyhľadať rezerváciu..."
+                  value={appointmentSearch}
+                  onChange={(e) => setAppointmentSearch(e.target.value)}
+                  className="w-full px-5 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#78e778] focus:outline-none shadow-sm placeholder-gray-400 transition-all duration-200 hover:shadow-md"
+                />
+              </div>
               <div>
                 <label className="block font-semibold mb-1">Status</label>
                 <div className="flex gap-2 flex-wrap">
@@ -297,7 +354,7 @@ function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredAppointments.map((a) => (
+                  {filteredAppointmentsWithSearch.map((a) => (
                     <tr key={a.appointment_id} className="border-b">
                       <td className="p-2">
                         {a.brand} {a.model}

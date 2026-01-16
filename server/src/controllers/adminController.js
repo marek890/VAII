@@ -64,8 +64,12 @@ export const updateUser = async (req, res) => {
 export const getVehicles = async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT v.car_id, v.brand, v.model, v.license_plate,
-             u.first_name || ' ' || u.last_name AS owner_name
+      SELECT 
+        v.car_id, 
+        v.brand, 
+        v.model, 
+        COALESCE(v.license_plate, '') AS license_plate,
+        COALESCE(u.first_name || ' ' || u.last_name, '') AS owner_name
       FROM "Car" v
       JOIN "User" u ON v.user_id = u.user_id
       ORDER BY v.car_id
