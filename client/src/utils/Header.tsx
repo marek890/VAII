@@ -64,6 +64,9 @@ function Header() {
                 <Link to="/profile" className="dropdown-item">
                   Profil
                 </Link>
+                <Link to="/admin_dashboard" className="dropdown-item">
+                  Admin panel
+                </Link>
                 <Link to="/vehicles" className="dropdown-item">
                   Vozidlá
                 </Link>
@@ -102,7 +105,7 @@ function Header() {
             </li>
             <li>
               <Link to="/dashboard" className="nav-link w-full text-center">
-                Kontakt
+                Rezervácie
               </Link>
             </li>
           </ul>
@@ -123,6 +126,12 @@ function Header() {
                     className="dropdown-item py-3 text-center"
                   >
                     Profil
+                  </Link>
+                  <Link
+                    to="/admin_dashboard"
+                    className="dropdown-item py-3 text-center"
+                  >
+                    Admin panel
                   </Link>
                   <Link
                     to="/vehicles"

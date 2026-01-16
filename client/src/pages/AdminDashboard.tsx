@@ -52,7 +52,7 @@ function AdminDashboard() {
   };
 
   const fetchCars = async () => {
-    const res = await fetch("http://localhost:5001/api/admin/cars", {
+    const res = await fetch("http://localhost:5001/api/admin/vehicles", {
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await res.json();
@@ -117,9 +117,10 @@ function AdminDashboard() {
   return (
     <div className="min-h-screen bg-linear-to-b mt-5 from-[#d8f5d8] via-[#b8f0b8] to-[#78e778] px-4 py-10">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-8">Admin Dashboard</h1>
-
-        <div className="flex justify-center gap-4 mb-6">
+        <div className="max-w-2xl mx-auto mt-10 bg-white rounded-2xl shadow-xl p-3">
+          <h1 className="text-4xl font-bold text-center">Admin panel</h1>
+        </div>
+        <div className="flex justify-center gap-4 mb-5 mt-5">
           <button
             onClick={() => setActiveTab("users")}
             className={`px-4 py-2 rounded-xl font-semibold hover:bg-[#78e778] hover:text-white transition ${
@@ -221,9 +222,9 @@ function AdminDashboard() {
             <table className="min-w-full">
               <thead className="bg-gray-200">
                 <tr>
-                  <th className="p-3">Brand</th>
+                  <th className="p-3">Značka</th>
                   <th className="p-3">Model</th>
-                  <th className="p-3">SPZ</th>
+                  <th className="p-3">ŠPZ</th>
                   <th className="p-3">Vlastník</th>
                 </tr>
               </thead>
