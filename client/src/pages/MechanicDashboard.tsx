@@ -3,10 +3,15 @@ import { useEffect, useState } from "react";
 function MechanicDashboard() {
   const [appointments, setAppointments] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [appointmentToCancel, setAppointmentToCancel] = useState<number | null>(
     null
   );
   const token = localStorage.getItem("token");
+
+  const statuses = ["Vytvorená", "Začatá", "Ukončená", "Zrušená"];
 
   const fetchAppointments = async () => {
     try {
@@ -26,17 +31,23 @@ function MechanicDashboard() {
 
   const filteredAppointments = appointments.filter((a) => {
     const term = searchTerm.toLowerCase();
-    const appointmentDate = new Date(a.appointment_datetime).toLocaleDateString(
-      "sk-SK"
-    );
+    const appointmentDate = new Date(a.appointment_datetime)
+      .toISOString()
+      .slice(0, 10);
 
-    return (
+    const matchesSearch =
       a.brand.toLowerCase().includes(term) ||
       a.model.toLowerCase().includes(term) ||
       a.license_plate.toLowerCase().includes(term) ||
-      a.status.toLowerCase().includes(term) ||
-      appointmentDate.includes(term)
-    );
+      a.status.toLowerCase().includes(term);
+
+    const matchesStatus =
+      selectedStatuses.length === 0 || selectedStatuses.includes(a.status);
+
+    const matchesDateFrom = dateFrom ? appointmentDate >= dateFrom : true;
+    const matchesDateTo = dateTo ? appointmentDate <= dateTo : true;
+
+    return matchesSearch && matchesStatus && matchesDateFrom && matchesDateTo;
   });
 
   const updateStatus = async (id: number, status: string) => {
@@ -75,20 +86,63 @@ function MechanicDashboard() {
     }
   };
 
+  const toggleStatus = (status: string) => {
+    if (selectedStatuses.includes(status)) {
+      setSelectedStatuses(selectedStatuses.filter((s) => s !== status));
+    } else {
+      setSelectedStatuses([...selectedStatuses, status]);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-linear-to-b mt-5 from-[#d8f5d8] via-[#b8f0b8] to-[#78e778] px-4 py-10">
       <div className="max-w-2xl mx-auto">
-        <div className="max-w-2xl mx-auto mt-10 bg-white rounded-2xl shadow-xl p-6">
-          <label className="block text-gray-800 font-semibold text-lg mb-2">
+        <div className="max-w-2xl mx-auto mt-10 bg-white rounded-2xl shadow-xl p-6 space-y-4">
+          <label className="block text-gray-800 font-semibold text-lg">
             Hľadať objednávky
           </label>
           <input
             type="text"
-            placeholder="Vyhľadať podľa auta, SPZ, statusu alebo dátumu..."
+            placeholder="Vyhľadať podľa auta, ŠPZ..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full px-5 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#78e778] focus:outline-none shadow-sm placeholder-gray-400 transition-all duration-200 hover:shadow-md"
           />
+
+          <label className="block text-gray-800 font-semibold text-lg">
+            Status
+          </label>
+          <div className="flex flex-wrap gap-3">
+            {statuses.map((status) => (
+              <label key={status} className="flex items-center gap-1">
+                <input
+                  type="checkbox"
+                  checked={selectedStatuses.includes(status)}
+                  onChange={() => toggleStatus(status)}
+                  className="w-4 h-4"
+                />
+                <span className="text-gray-700">{status}</span>
+              </label>
+            ))}
+          </div>
+
+          <label className="block text-gray-800 font-semibold text-lg">
+            Dátum
+          </label>
+          <div className="flex gap-3">
+            <input
+              type="date"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+              className="w-1/2 px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#78e778] focus:outline-none"
+            />
+            <input
+              type="date"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+              className="w-1/2 px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#78e778] focus:outline-none"
+            />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-50 gap-y-10 mt-5 justify-items-center">
