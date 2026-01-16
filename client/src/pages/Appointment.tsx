@@ -26,18 +26,12 @@ function BookAppointment() {
   );
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
 
   const token = localStorage.getItem("token");
-
-  const filteredAppointments = appointments.filter((a) => {
-    const term = searchTerm.toLowerCase();
-    return (
-      a.brand.toLowerCase().includes(term) ||
-      a.model.toLowerCase().includes(term) ||
-      a.license_plate.toLowerCase().includes(term) ||
-      a.status.toLowerCase().includes(term)
-    );
-  });
+  const statuses = ["Vytvorená", "Začatá", "Ukončená", "Zrušená"];
 
   const fetchCars = async () => {
     const res = await fetch("http://localhost:5001/api/vehicles", {
@@ -92,9 +86,24 @@ function BookAppointment() {
     fetchAvailableTimes(appointmentDate);
   }, [appointmentDate]);
 
+  const toggleService = (serviceId: number) => {
+    setSelectedServices((prev) =>
+      prev.includes(serviceId)
+        ? prev.filter((id) => id !== serviceId)
+        : [...prev, serviceId]
+    );
+  };
+
+  const toggleStatus = (status: string) => {
+    if (selectedStatuses.includes(status)) {
+      setSelectedStatuses(selectedStatuses.filter((s) => s !== status));
+    } else {
+      setSelectedStatuses([...selectedStatuses, status]);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (
       !selectedCar ||
       selectedServices.length === 0 ||
@@ -105,13 +114,9 @@ function BookAppointment() {
       setMessage("Vyplňte všetky údaje.");
       return;
     }
-
-    const url = "http://localhost:5001/api/appointment";
-    const method = "POST";
-
     try {
-      const res = await fetch(url, {
-        method,
+      const res = await fetch("http://localhost:5001/api/appointment", {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -124,32 +129,21 @@ function BookAppointment() {
           notes,
         }),
       });
-
       if (!res.ok) throw new Error();
 
       setMessageType("success");
       setMessage("Objednávka bola vytvorená.");
-
       setSelectedCar(null);
       setSelectedServices([]);
       setAppointmentDate("");
       setAppointmentTime("");
       setNotes("");
       setAvailableTimes([]);
-
       fetchAppointments();
     } catch {
       setMessageType("error");
       setMessage("Nepodarilo sa uložiť objednávku.");
     }
-  };
-
-  const toggleService = (serviceId: number) => {
-    setSelectedServices((prev) =>
-      prev.includes(serviceId)
-        ? prev.filter((id) => id !== serviceId)
-        : [...prev, serviceId]
-    );
   };
 
   const confirmCancelAppointment = (id: number) => setAppointmentToCancel(id);
@@ -171,6 +165,25 @@ function BookAppointment() {
       console.log(err);
     }
   };
+
+  const filteredAppointments = appointments.filter((a) => {
+    const term = searchTerm.toLowerCase();
+    const appointmentDateStr = new Date(a.appointment_datetime)
+      .toISOString()
+      .slice(0, 10);
+
+    const matchesSearch =
+      a.brand.toLowerCase().includes(term) ||
+      a.model.toLowerCase().includes(term) ||
+      a.license_plate.toLowerCase().includes(term);
+
+    const matchesStatus =
+      selectedStatuses.length === 0 || selectedStatuses.includes(a.status);
+    const matchesDateFrom = dateFrom ? appointmentDateStr >= dateFrom : true;
+    const matchesDateTo = dateTo ? appointmentDateStr <= dateTo : true;
+
+    return matchesSearch && matchesStatus && matchesDateFrom && matchesDateTo;
+  });
 
   return (
     <div className="min-h-screen bg-linear-to-b mt-5 from-[#d8f5d8] via-[#b8f0b8] to-[#78e778] px-4 py-10">
@@ -277,7 +290,7 @@ function BookAppointment() {
           )}
         </form>
       </div>
-      <div className="max-w-2xl mx-auto mt-10 bg-white rounded-2xl shadow-xl p-6">
+      <div className="max-w-2xl mx-auto mt-10 bg-white rounded-2xl shadow-xl p-6 space-y-4">
         <label className="block text-gray-800 font-semibold text-lg mb-2">
           Hľadať objednávky
         </label>
@@ -288,6 +301,40 @@ function BookAppointment() {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full px-5 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#78e778] focus:outline-none shadow-sm placeholder-gray-400 transition-all duration-200 hover:shadow-md"
         />
+        <label className="block text-gray-800 font-semibold text-lg">
+          Status
+        </label>
+        <div className="flex flex-wrap gap-3">
+          {statuses.map((status) => (
+            <label key={status} className="flex items-center gap-1">
+              <input
+                type="checkbox"
+                checked={selectedStatuses.includes(status)}
+                onChange={() => toggleStatus(status)}
+                className="w-4 h-4"
+              />
+              <span className="text-gray-700">{status}</span>
+            </label>
+          ))}
+        </div>
+
+        <label className="block text-gray-800 font-semibold text-lg">
+          Dátum
+        </label>
+        <div className="flex gap-3">
+          <input
+            type="date"
+            value={dateFrom}
+            onChange={(e) => setDateFrom(e.target.value)}
+            className="w-1/2 px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#78e778] focus:outline-none"
+          />
+          <input
+            type="date"
+            value={dateTo}
+            onChange={(e) => setDateTo(e.target.value)}
+            className="w-1/2 px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#78e778] focus:outline-none"
+          />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-20 mt-5">

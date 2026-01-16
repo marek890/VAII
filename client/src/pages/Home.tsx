@@ -1,43 +1,18 @@
-import { useEffect, useState } from "react";
-import { isLoggedIn } from "../utils/auth";
 import { Link } from "react-router-dom";
 import { BsCalendarCheck } from "react-icons/bs";
 import { IoCar } from "react-icons/io5";
 
 function Home() {
-  const [userName, setUserName] = useState("");
-
-  useEffect(() => {
-    if (!isLoggedIn()) {
-      return;
-    }
-
-    const token = localStorage.getItem("token");
-
-    fetch("http://localhost:5001/api/me", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
-      .then((data) => setUserName(data.name || ""))
-      .catch(() => {});
-  }, []);
-
   return (
     <div className="min-h-screen bg-linear-to-b from-[#d8f5d8] via-[#b8f0b8] to-[#78e778] px-4 py-10 mt-20">
       <div className="max-w-6xl mx-auto">
         <div className="bg-white p-8 rounded-2xl shadow-xl/20 mb-10 text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-3">Vitajte</h1>
-
-          {userName && (
-            <p className="text-lg text-gray-700">
-              Prihlásený používateľ:{" "}
-              <span className="font-semibold text-gray-900">{userName}</span>
-            </p>
-          )}
+          <h1 className="text-4xl font-bold text-gray-900 mb-3">
+            Vitajte vo Vajku
+          </h1>
 
           <p className="text-gray-600 mt-3 text-lg">
-            Jednoduchý rezervačný systém pre autoservis. Spravujte vozidlá,
-            rezervácie a svoj profil.
+            Jednoduchý rezervačný systém pre autoservisy.
           </p>
         </div>
 
