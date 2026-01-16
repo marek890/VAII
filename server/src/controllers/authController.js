@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import { pool } from "../db.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
-const JWT_EXPIRES = "1h";
+const JWT_EXPIRES = "10h";
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const phoneRegex = /^(\+421|0)\d{9}$/;
 

@@ -203,3 +203,40 @@ export const getServices = async (req, res) => {
     res.status(500).json({ error: "Chyba pri načítaní služieb" });
   }
 };
+
+export const cancelAppointment = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query(
+      `SELECT status_id
+       FROM "Appointment"
+       WHERE appointment_id = $1 AND customer_id = $2`,
+      [id, req.user.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Objednávka neexistuje" });
+    }
+
+    const status_id = result.rows[0].status_id;
+
+    if (status_id === 3) {
+      return res
+        .status(400)
+        .json({ error: "Ukončenú objednávku nie je možné zrušiť" });
+    }
+
+    await pool.query(
+      `UPDATE "Appointment"
+       SET status_id = 4
+       WHERE appointment_id = $1`,
+      [id]
+    );
+
+    res.json({ message: "Objednávka bola zrušená" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Chyba pri rušení objednávky" });
+  }
+};
