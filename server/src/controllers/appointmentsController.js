@@ -175,11 +175,22 @@ export const getUserAppointments = async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT a.appointment_id, a.appointment_datetime, a.notes,
-              s.name AS status, c.brand, c.model, c.license_plate
+              s.name AS status,
+              c.brand, c.model, c.license_plate,
+              json_agg(
+                json_build_object(
+                  'service_id', srv.service_id,
+                  'service_name', srv.service_name,
+                  'estimated_duration', srv.estimated_duration
+                )
+              ) AS services
        FROM "Appointment" a
        JOIN "Status" s ON a.status_id = s.status_id
        JOIN "Car" c ON a.car_id = c.car_id
+       LEFT JOIN "AppointmentService" aps ON a.appointment_id = aps.appointment_id
+       LEFT JOIN "Service" srv ON aps.service_id = srv.service_id
        WHERE a.customer_id = $1
+       GROUP BY a.appointment_id, s.name, c.brand, c.model, c.license_plate
        ORDER BY a.appointment_datetime`,
       [req.user.id]
     );
@@ -238,5 +249,38 @@ export const cancelAppointment = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Chyba pri rušení objednávky" });
+  }
+};
+
+export const updateAppointmentStatus = async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  if (!status) return res.status(400).json({ error: "Chýba nový status" });
+
+  try {
+    const statusRes = await pool.query(
+      `SELECT status_id FROM "Status" WHERE name = $1`,
+      [status]
+    );
+
+    if (statusRes.rows.length === 0)
+      return res.status(400).json({ error: "Neplatný status" });
+
+    const status_id = statusRes.rows[0].status_id;
+
+    const result = await pool.query(
+      `UPDATE "Appointment"
+       SET status_id = $1
+       WHERE appointment_id = $2`,
+      [status_id, id]
+    );
+
+    res.json({ message: `Status objednávky bol zmenený na '${status}'` });
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .json({ error: "Chyba pri aktualizácii statusu objednávky" });
   }
 };
