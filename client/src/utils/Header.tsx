@@ -44,8 +44,8 @@ function Header() {
             </Link>
           </li>
           <li>
-            <Link to="/contact" className="nav-link">
-              Kontakt
+            <Link to="/dashboard" className="nav-link">
+              Rezervácie
             </Link>
           </li>
         </ul>
@@ -101,7 +101,7 @@ function Header() {
               </Link>
             </li>
             <li>
-              <Link to="/contact" className="nav-link w-full text-center">
+              <Link to="/dashboard" className="nav-link w-full text-center">
                 Kontakt
               </Link>
             </li>

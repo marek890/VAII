@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import Profile from "./pages/Profile";
 import Appointment from "./pages/Appointment";
+import MechanicDashboard from "./pages/MechanicDashboard";
 
 function App() {
   return (
@@ -37,6 +38,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Appointment />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <MechanicDashboard />
             </ProtectedRoute>
           }
         />

@@ -277,15 +277,19 @@ function BookAppointment() {
           )}
         </form>
       </div>
-      <div className="max-w-2xl mx-auto mt-6 bg-white rounded-xl shadow-lg">
+      <div className="max-w-2xl mx-auto mt-10 bg-white rounded-2xl shadow-xl p-6">
+        <label className="block text-gray-800 font-semibold text-lg mb-2">
+          Hľadať objednávky
+        </label>
         <input
           type="text"
-          placeholder="Vyhľadať objednávku podľa auta alebo ŠPZ..."
+          placeholder="Vyhľadať podľa auta, SPZ, statusu alebo dátumu..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#78e778] focus:outline-none text-black"
+          className="w-full px-5 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#78e778] focus:outline-none shadow-sm placeholder-gray-400 transition-all duration-200 hover:shadow-md"
         />
       </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-20 mt-5">
         {filteredAppointments.map((a: any) => {
           const canModify = a.status === "Vytvorená";
