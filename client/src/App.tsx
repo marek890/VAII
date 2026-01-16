@@ -8,6 +8,7 @@ import ProtectedRoute from "./utils/ProtectedRoute";
 import Profile from "./pages/Profile";
 import Appointment from "./pages/Appointment";
 import MechanicDashboard from "./pages/MechanicDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function App() {
   return (
@@ -46,6 +47,14 @@ function App() {
           element={
             <ProtectedRoute>
               <MechanicDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin_dashboard"
+          element={
+            <ProtectedRoute>
+              <AdminDashboard />
             </ProtectedRoute>
           }
         />
