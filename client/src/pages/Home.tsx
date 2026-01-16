@@ -3,7 +3,6 @@ import { isLoggedIn } from "../utils/auth";
 import { Link } from "react-router-dom";
 import { BsCalendarCheck } from "react-icons/bs";
 import { IoCar } from "react-icons/io5";
-import { FaTools } from "react-icons/fa";
 
 function Home() {
   const [userName, setUserName] = useState("");
@@ -42,7 +41,7 @@ function Home() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
           <Link
             to="/appointment"
             className="bg-white p-7 rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-200 flex flex-col items-center text-center"
@@ -66,19 +65,6 @@ function Home() {
             </h3>
             <p className="text-gray-600">
               Spravujte svoje autá — pridávajte nové alebo upravujte existujúce.
-            </p>
-          </Link>
-
-          <Link
-            to="/my-reservations"
-            className="bg-white p-7 rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-200 flex flex-col items-center text-center"
-          >
-            <FaTools className="text-[#78e778] text-6xl mb-4" />
-            <h3 className="text-2xl font-semibold text-gray-900 mb-2">
-              Moje rezervácie
-            </h3>
-            <p className="text-gray-600">
-              Zobraziť nadchádzajúce a minulé servisné termíny.
             </p>
           </Link>
         </div>
