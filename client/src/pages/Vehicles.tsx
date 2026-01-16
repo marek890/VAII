@@ -289,76 +289,68 @@ function Vehicles() {
         </form>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {vehicles.length === 0 ? (
-            <p className="text-gray-700 col-span-full text-center">
-              Žiadne vozidlá zatiaľ.
-            </p>
-          ) : (
-            vehicles.map((v: any) => (
-              <div
-                key={v.car_id}
-                className="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-200"
-              >
-                <div className="bg-[#78e778] h-12 flex items-center px-4">
-                  <IoCar className="text-2xl text-white mr-3" />
-                  <h4 className="text-white font-bold text-lg">
-                    {v.brand} {v.model} ({v.year || "—"})
-                  </h4>
-                </div>
+          {vehicles.map((v: any) => (
+            <div
+              key={v.car_id}
+              className="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-200"
+            >
+              <div className="bg-[#78e778] h-12 flex items-center px-4">
+                <IoCar className="text-2xl text-white mr-3" />
+                <h4 className="text-white font-bold text-lg">
+                  {v.brand} {v.model} ({v.year || "—"})
+                </h4>
+              </div>
 
-                <div className="p-4 space-y-2">
-                  <p className="text-gray-600 font-medium">
-                    ŠPZ: {v.license_plate || "—"}
-                  </p>
-                  <p className="text-gray-600 font-medium">
-                    VIN: {v.vin || "—"}
-                  </p>
-                  <p className="text-gray-600 font-medium">
-                    Palivo: {v.fuel_type || "—"}
-                  </p>
-                  <p className="text-gray-600 font-medium">
-                    Farba: {v.color || "—"}
-                  </p>
-                  <p className="text-gray-600 font-medium">
-                    Najazdené km: {v.mileage || "—"}
-                  </p>
+              <div className="p-4 space-y-2">
+                <p className="text-gray-600 font-medium">
+                  ŠPZ: {v.license_plate || "—"}
+                </p>
+                <p className="text-gray-600 font-medium">VIN: {v.vin || "—"}</p>
+                <p className="text-gray-600 font-medium">
+                  Palivo: {v.fuel_type || "—"}
+                </p>
+                <p className="text-gray-600 font-medium">
+                  Farba: {v.color || "—"}
+                </p>
+                <p className="text-gray-600 font-medium">
+                  Najazdené km: {v.mileage || "—"}
+                </p>
 
-                  <div className="flex gap-2 mt-4">
-                    <button
-                      onClick={() => startEdit(v)}
-                      className="flex-1 px-3 py-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 font-medium"
-                    >
-                      Upraviť
-                    </button>
+                <div className="flex gap-2 mt-4">
+                  <button
+                    onClick={() => startEdit(v)}
+                    className="flex-1 px-3 py-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 font-medium"
+                  >
+                    Upraviť
+                  </button>
 
-                    {vehicleToDelete === v.car_id ? (
-                      <div className="flex gap-2 flex-1">
-                        <button
-                          onClick={handleDelete}
-                          className="flex-1 px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium"
-                        >
-                          Potvrdiť
-                        </button>
-                        <button
-                          onClick={cancelDelete}
-                          className="flex-1 px-3 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-medium"
-                        >
-                          Zrušiť
-                        </button>
-                      </div>
-                    ) : (
+                  {vehicleToDelete === v.car_id ? (
+                    <div className="flex gap-2 flex-1">
                       <button
-                        onClick={() => confirmDeleteVehicle(v.car_id)}
-                        className="flex-1 px-3 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 font-medium"
+                        onClick={handleDelete}
+                        className="flex-1 px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium"
                       >
-                        Odstrániť
+                        Potvrdiť
                       </button>
-                    )}
-                  </div>
+                      <button
+                        onClick={cancelDelete}
+                        className="flex-1 px-3 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-medium"
+                      >
+                        Zrušiť
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => confirmDeleteVehicle(v.car_id)}
+                      className="flex-1 px-3 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 font-medium"
+                    >
+                      Odstrániť
+                    </button>
+                  )}
                 </div>
               </div>
-            ))
-          )}
+            </div>
+          ))}
         </div>
       </div>
     </div>
