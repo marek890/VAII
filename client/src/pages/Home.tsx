@@ -44,7 +44,7 @@ function Home() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           <Link
-            to="/reservation"
+            to="/appointment"
             className="bg-white p-7 rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-200 flex flex-col items-center text-center"
           >
             <BsCalendarCheck className="text-[#78e778] text-6xl mb-4" />

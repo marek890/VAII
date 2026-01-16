@@ -39,7 +39,7 @@ function Header() {
             </Link>
           </li>
           <li>
-            <Link to="/reservation" className="nav-link">
+            <Link to="/appointment" className="nav-link">
               Rezervácia
             </Link>
           </li>
