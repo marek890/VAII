@@ -67,25 +67,24 @@ model Service {
 }
 
 model Appointment {
-  appointment_id Int @id @default(autoincrement())
+  appointment_id      Int @id @default(autoincrement())
+  customer_id         Int
+  mechanic_id         Int
+  car_id              Int
+  status_id           Int
 
-  customer_id Int
-  mechanic_id Int
-  car_id      Int
-  status_id   Int
-
-  customer User @relation("CustomerAppointments", fields: [customer_id], references: [user_id])
-  mechanic User @relation("MechanicAppointments", fields: [mechanic_id], references: [user_id])
-  car      Car  @relation(fields: [car_id], references: [car_id])
+  customer User   @relation("CustomerAppointments", fields: [customer_id], references: [user_id])
+  mechanic User   @relation("MechanicAppointments", fields: [mechanic_id], references: [user_id])
+  car      Car    @relation(fields: [car_id], references: [car_id])
   status   Status @relation(fields: [status_id], references: [status_id])
 
-  appointment_date DateTime
-  appointment_time DateTime
-  notes        String?
-  created_at   DateTime @default(now())
+  appointment_datetime DateTime
+  notes                String?
+  created_at           DateTime @default(now())
 
   services AppointmentService[]
 }
+
 
 model AppointmentService {
   appointment_id Int

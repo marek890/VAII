@@ -3,6 +3,7 @@ import cors from "cors";
 import authRouter from "./routes/auth.js";
 import vehiclesRoutes from "./routes/vehicles.js";
 import profileRouter from "./routes/profile.js";
+import appointmentsRouter from "./routes/appointments.js";
 
 const app = express();
 
@@ -12,5 +13,6 @@ app.use(express.json());
 app.use("/api", authRouter);
 app.use("/api/vehicles", vehiclesRoutes);
 app.use("/api/profile", profileRouter);
+app.use("/api/appointment", appointmentsRouter);
 
 app.listen(5001, () => console.log("Server running on port 5001"));
