@@ -3,12 +3,21 @@ import type { ReactNode } from "react";
 
 interface ProtectedRouteProps {
   children: ReactNode;
+  allowedRoles?: string[];
 }
 
-export default function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const isLoggedIn = !!localStorage.getItem("token");
+export default function ProtectedRoute({
+  children,
+  allowedRoles,
+}: ProtectedRouteProps) {
+  const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
 
-  if (!isLoggedIn) {
+  if (!token) {
+    return <Navigate to="/" replace />;
+  }
+
+  if (allowedRoles && role && !allowedRoles.includes(role)) {
     return <Navigate to="/" replace />;
   }
 
