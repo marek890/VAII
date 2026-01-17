@@ -13,7 +13,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"error" | "success">(
-    "success"
+    "success",
   );
 
   const [emailError, setEmailError] = useState("");

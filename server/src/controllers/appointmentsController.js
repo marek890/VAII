@@ -47,7 +47,7 @@ export const getAvailableTimes = async (req, res) => {
        WHERE DATE(appointment_datetime) = $1
          AND a.status_id IN (1,2,3)
        GROUP BY appointment_datetime`,
-      [date]
+      [date],
     );
 
     const blockedTimes = [];
@@ -89,7 +89,7 @@ export const createAppointment = async (req, res) => {
 
   try {
     const mechRes = await pool.query(
-      `SELECT user_id FROM "User" WHERE role_id = 2 LIMIT 1`
+      `SELECT user_id FROM "User" WHERE role_id = 2 LIMIT 1`,
     );
     if (mechRes.rows.length === 0)
       return res.status(400).json({ error: "Žiadny mechanik nie je dostupný" });
@@ -100,7 +100,7 @@ export const createAppointment = async (req, res) => {
       `SELECT SUM(estimated_duration) AS total_duration
        FROM "Service"
        WHERE service_id = ANY($1::int[])`,
-      [services]
+      [services],
     );
 
     const totalDuration = Number(serviceRes.rows[0].total_duration);
@@ -116,7 +116,7 @@ export const createAppointment = async (req, res) => {
          AND DATE(a.appointment_datetime) = $2
          AND a.status_id IN (1,2,3)
        GROUP BY appointment_datetime`,
-      [mechanic_id, appointment_date]
+      [mechanic_id, appointment_date],
     );
 
     const blockedTimes = [];
@@ -143,7 +143,7 @@ export const createAppointment = async (req, res) => {
     }
 
     const appointment_datetime = new Date(
-      `${appointment_date}T${appointment_time}:00`
+      `${appointment_date}T${appointment_time}:00`,
     );
 
     const insertAppointment = await pool.query(
@@ -151,7 +151,7 @@ export const createAppointment = async (req, res) => {
        (customer_id, car_id, mechanic_id, status_id, appointment_datetime, notes, created_at)
        VALUES ($1,$2,$3,1,$4,$5,NOW())
        RETURNING appointment_id`,
-      [req.user.id, car_id, mechanic_id, appointment_datetime, notes || ""]
+      [req.user.id, car_id, mechanic_id, appointment_datetime, notes || ""],
     );
 
     const appointment_id = insertAppointment.rows[0].appointment_id;
@@ -159,8 +159,8 @@ export const createAppointment = async (req, res) => {
     const servicePromises = services.map((service_id) =>
       pool.query(
         `INSERT INTO "AppointmentService" (appointment_id, service_id) VALUES ($1, $2)`,
-        [appointment_id, service_id]
-      )
+        [appointment_id, service_id],
+      ),
     );
     await Promise.all(servicePromises);
 
@@ -192,7 +192,7 @@ export const getUserAppointments = async (req, res) => {
        WHERE a.customer_id = $1
        GROUP BY a.appointment_id, s.name, c.brand, c.model, c.license_plate
        ORDER BY a.appointment_datetime`,
-      [req.user.id]
+      [req.user.id],
     );
     res.json(result.rows);
   } catch (err) {
@@ -206,7 +206,7 @@ export const getServices = async (req, res) => {
     const result = await pool.query(
       `SELECT service_id, service_name, description, estimated_duration
        FROM "Service"
-       ORDER BY service_name`
+       ORDER BY service_name`,
     );
     res.json(result.rows);
   } catch (err) {
@@ -223,7 +223,7 @@ export const cancelAppointment = async (req, res) => {
       `SELECT status_id
        FROM "Appointment"
        WHERE appointment_id = $1 AND customer_id = $2`,
-      [id, req.user.id]
+      [id, req.user.id],
     );
 
     if (result.rows.length === 0) {
@@ -242,7 +242,7 @@ export const cancelAppointment = async (req, res) => {
       `UPDATE "Appointment"
        SET status_id = 4
        WHERE appointment_id = $1`,
-      [id]
+      [id],
     );
 
     res.json({ message: "Objednávka bola zrušená" });
@@ -261,7 +261,7 @@ export const updateAppointmentStatus = async (req, res) => {
   try {
     const statusRes = await pool.query(
       `SELECT status_id FROM "Status" WHERE name = $1`,
-      [status]
+      [status],
     );
 
     if (statusRes.rows.length === 0)
@@ -273,7 +273,7 @@ export const updateAppointmentStatus = async (req, res) => {
       `UPDATE "Appointment"
        SET status_id = $1
        WHERE appointment_id = $2`,
-      [status_id, id]
+      [status_id, id],
     );
 
     res.json({ message: `Status objednávky bol zmenený na '${status}'` });
@@ -282,5 +282,58 @@ export const updateAppointmentStatus = async (req, res) => {
     res
       .status(500)
       .json({ error: "Chyba pri aktualizácii statusu objednávky" });
+  }
+};
+
+export const getAllAppointments = async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT
+  a.appointment_id,
+  a.appointment_datetime,
+  a.notes,
+
+  s.name AS status,
+
+  COALESCE(c.brand, '—') AS brand,
+  COALESCE(c.model, '—') AS model,
+  COALESCE(c.license_plate, '—') AS license_plate,
+
+  COALESCE(u.first_name, 'Neznámy') AS first_name,
+  COALESCE(u.last_name, 'užívateľ') AS last_name,
+
+  COALESCE(
+    json_agg(
+      json_build_object(
+        'service_id', srv.service_id,
+        'service_name', srv.service_name,
+        'estimated_duration', srv.estimated_duration
+      )
+    ) FILTER (WHERE srv.service_id IS NOT NULL),
+    '[]'
+  ) AS services
+
+FROM "Appointment" a
+JOIN "Status" s ON a.status_id = s.status_id
+
+LEFT JOIN "Car" c ON a.car_id = c.car_id
+LEFT JOIN "User" u ON a.customer_id = u.user_id
+LEFT JOIN "AppointmentService" aps ON a.appointment_id = aps.appointment_id
+LEFT JOIN "Service" srv ON aps.service_id = srv.service_id
+
+GROUP BY
+  a.appointment_id,
+  s.name,
+  c.brand, c.model, c.license_plate,
+  u.first_name, u.last_name
+
+ORDER BY a.appointment_datetime;
+`,
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Chyba pri načítaní objednávok" });
   }
 };

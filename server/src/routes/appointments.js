@@ -1,5 +1,5 @@
 import express from "express";
-import { verifyToken } from "../utils/authMiddleware.js";
+import { verifyToken, requireRole } from "../utils/authMiddleware.js";
 import {
   getAvailableTimes,
   createAppointment,
@@ -7,6 +7,7 @@ import {
   getServices,
   cancelAppointment,
   updateAppointmentStatus,
+  getAllAppointments,
 } from "../controllers/appointmentsController.js";
 
 const router = express.Router();
@@ -16,6 +17,17 @@ router.get("/services", verifyToken, getServices);
 router.post("/", verifyToken, createAppointment);
 router.get("/", verifyToken, getUserAppointments);
 router.delete("/:id", verifyToken, cancelAppointment);
-router.put("/:id/status", verifyToken, updateAppointmentStatus);
+router.put(
+  "/:id/status",
+  verifyToken,
+  requireRole(["Admin", "Mechanic"]),
+  updateAppointmentStatus,
+);
+router.get(
+  "/all",
+  verifyToken,
+  requireRole(["Admin", "Mechanic"]),
+  getAllAppointments,
+);
 
 export default router;

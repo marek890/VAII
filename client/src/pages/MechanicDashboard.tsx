@@ -7,7 +7,7 @@ function MechanicDashboard() {
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [appointmentToCancel, setAppointmentToCancel] = useState<number | null>(
-    null
+    null,
   );
   const token = localStorage.getItem("token");
 
@@ -15,9 +15,10 @@ function MechanicDashboard() {
 
   const fetchAppointments = async () => {
     try {
-      const res = await fetch("http://localhost:5001/api/appointment", {
+      const res = await fetch("http://localhost:5001/api/appointment/all", {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       const data = await res.json();
       setAppointments(data);
     } catch (err) {
@@ -77,7 +78,7 @@ function MechanicDashboard() {
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
       setAppointmentToCancel(null);
       fetchAppointments();
@@ -166,14 +167,14 @@ function MechanicDashboard() {
                   <p className="text-gray-600 font-medium">
                     Dátum:{" "}
                     {new Date(a.appointment_datetime).toLocaleDateString(
-                      "sk-SK"
+                      "sk-SK",
                     )}
                   </p>
                   <p className="text-gray-600 font-medium">
                     Čas:{" "}
                     {new Date(a.appointment_datetime).toLocaleTimeString(
                       "sk-SK",
-                      { hour: "2-digit", minute: "2-digit" }
+                      { hour: "2-digit", minute: "2-digit" },
                     )}
                   </p>
                   <p className="text-gray-600 font-medium">
