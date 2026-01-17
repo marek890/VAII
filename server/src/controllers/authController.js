@@ -74,6 +74,10 @@ export const loginUser = async (req, res) => {
       return res.status(401).json({ error: "Nesprávne heslo" });
     }
 
+    if (!user.active) {
+      return res.status(403).json({ message: "Účet je deaktivovaný" });
+    }
+
     const token = jwt.sign(
       { id: user.user_id, email: user.email, role: user.role_id },
       JWT_SECRET,

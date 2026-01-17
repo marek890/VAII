@@ -3,12 +3,16 @@ import { pool } from "../db.js";
 export const getUsers = async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT u.user_id, u.first_name || ' ' || u.last_name AS name, u.email, 
-             CASE u.role_id 
-               WHEN 1 THEN 'customer' 
-               WHEN 2 THEN 'mechanic' 
-               WHEN 3 THEN 'admin' 
-             END AS role
+      SELECT 
+        u.user_id, 
+        u.first_name || ' ' || u.last_name AS name, 
+        u.email, 
+        u.active,
+        CASE u.role_id 
+          WHEN 1 THEN 'customer' 
+          WHEN 2 THEN 'mechanic' 
+          WHEN 3 THEN 'admin' 
+        END AS role
       FROM "User" u
       ORDER BY u.user_id
     `);
@@ -21,7 +25,7 @@ export const getUsers = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   const userId = parseInt(req.params.user_id);
-  const { name, email, role, deactivate } = req.body;
+  const { name, email, role, active } = req.body;
 
   try {
     if (name) {
@@ -48,8 +52,9 @@ export const updateUser = async (req, res) => {
       ]);
     }
 
-    if (deactivate === "true") {
-      await pool.query(`UPDATE "User" SET active = FALSE WHERE user_id = $1`, [
+    if (typeof active === "boolean") {
+      await pool.query(`UPDATE "User" SET active = $1 WHERE user_id = $2`, [
+        active,
         userId,
       ]);
     }

@@ -21,6 +21,7 @@ model User {
   phone      String?
   role_id    Int
   role       Role    @relation(fields: [role_id], references: [role_id])
+  active     Boolean @default(true)
 
   cars             Car[]
   appointments_as_customer Appointment[] @relation("CustomerAppointments")

@@ -5,6 +5,7 @@ type User = {
   name: string;
   email: string;
   role: string;
+  active: boolean;
 };
 
 type Car = {
@@ -46,6 +47,9 @@ function AdminDashboard() {
   const [carSearch, setCarSearch] = useState("");
   const [appointmentSearch, setAppointmentSearch] = useState("");
   const [carToDelete, setCarToDelete] = useState<number | null>(null);
+  const [userToToggle, setUserToToggle] = useState<number | null>(null);
+  const roles = ["customer", "mechanic", "admin"];
+  const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
 
   const fetchUsers = async () => {
     const res = await fetch("http://localhost:5001/api/admin/users", {
@@ -139,6 +143,35 @@ function AdminDashboard() {
     }
   };
 
+  const toggleUserActive = async (user_id: number, active: boolean) => {
+    await fetch(`http://localhost:5001/api/admin/users/${user_id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ active }),
+    });
+    setUserToToggle(null);
+    fetchUsers();
+  };
+
+  const confirmToggleUser = (user_id: number) => {
+    setUserToToggle(user_id);
+  };
+
+  const cancelToggleUser = () => {
+    setUserToToggle(null);
+  };
+
+  const toggleRole = (role: string) => {
+    if (selectedRoles.includes(role)) {
+      setSelectedRoles(selectedRoles.filter((r) => r !== role));
+    } else {
+      setSelectedRoles([...selectedRoles, role]);
+    }
+  };
+
   const filteredAppointments = appointments.filter((a) => {
     const matchesStatus =
       selectedStatuses.length === 0 || selectedStatuses.includes(a.status);
@@ -147,12 +180,16 @@ function AdminDashboard() {
     const matchesDateTo = !dateTo || appointmentDate <= dateTo;
     return matchesStatus && matchesDateFrom && matchesDateTo;
   });
-  const filteredUsers = users.filter(
-    (u) =>
+  const filteredUsers = users.filter((u) => {
+    const matchesSearch =
       u.name.toLowerCase().includes(userSearch.toLowerCase()) ||
-      u.email.toLowerCase().includes(userSearch.toLowerCase()) ||
-      u.role.toLowerCase().includes(userSearch.toLowerCase())
-  );
+      u.email.toLowerCase().includes(userSearch.toLowerCase());
+
+    const matchesRole =
+      selectedRoles.length === 0 || selectedRoles.includes(u.role);
+
+    return matchesSearch && matchesRole;
+  });
 
   const filteredCars = cars.filter(
     (c) =>
@@ -216,28 +253,47 @@ function AdminDashboard() {
 
         {activeTab === "users" && (
           <div className="bg-white rounded-2xl shadow-xl p-6 overflow-x-auto">
-            <div className="mb-3">
-              <input
-                type="text"
-                placeholder="Vyhľadať používateľa..."
-                value={userSearch}
-                onChange={(e) => setUserSearch(e.target.value)}
-                className="w-full px-5 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#78e778] focus:outline-none shadow-sm placeholder-gray-400 transition-all duration-200 hover:shadow-md"
-              />
+            <div className="flex flex-wrap gap-4 mb-4 items-center">
+              <div className="mb-3">
+                <input
+                  type="text"
+                  placeholder="Vyhľadať používateľa..."
+                  value={userSearch}
+                  onChange={(e) => setUserSearch(e.target.value)}
+                  className="w-full px-5 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#78e778] focus:outline-none shadow-sm placeholder-gray-400 transition-all duration-200 hover:shadow-md"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block font-semibold mb-2">Rola</label>
+                <div className="flex gap-4 flex-wrap">
+                  {roles.map((role) => (
+                    <label key={role} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={selectedRoles.includes(role)}
+                        onChange={() => toggleRole(role)}
+                        className="w-4 h-4"
+                      />
+                      <span className="capitalize">{role}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
             </div>
+
             <table className="min-w-full table-fixed text-center">
               <thead className="bg-gray-200">
                 <tr>
                   <th className="p-3">Meno</th>
                   <th className="p-3">Email</th>
-                  <th className="p-3">Role</th>
+                  <th className="p-3">Rola</th>
                   <th className="p-3">Akcie</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredUsers.map((u) => (
-                  <tr key={u.user_id} className="border-b">
-                    <td className="p-2">
+                  <tr key={u.user_id} className="border-y border-gray-300">
+                    <td className={`p-2 ${!u.active ? "opacity-50" : ""}`}>
                       <input
                         type="text"
                         value={u.name}
@@ -247,7 +303,7 @@ function AdminDashboard() {
                         className="px-2 py-1 w-full border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#78e778] focus:outline-none shadow-sm placeholder-gray-400 transition-all duration-200 hover:shadow-md"
                       />
                     </td>
-                    <td className="p-2">
+                    <td className={`p-2 ${!u.active ? "opacity-50" : ""}`}>
                       <input
                         type="email"
                         value={u.email}
@@ -257,7 +313,7 @@ function AdminDashboard() {
                         className="px-2 py-1 w-full border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#78e778] focus:outline-none shadow-sm placeholder-gray-400 transition-all duration-200 hover:shadow-md"
                       />
                     </td>
-                    <td className="p-2">
+                    <td className={`p-2 ${!u.active ? "opacity-50" : ""}`}>
                       <select
                         value={u.role}
                         onChange={(e) =>
@@ -271,14 +327,39 @@ function AdminDashboard() {
                       </select>
                     </td>
                     <td className="p-2">
-                      <button
-                        onClick={() =>
-                          updateUser(u.user_id, "deactivate", "true")
-                        }
-                        className="px-3 py-1 bg-red-500 text-white rounded-xl hover:bg-red-600 transition"
-                      >
-                        Deaktivovať
-                      </button>
+                      {userToToggle === u.user_id ? (
+                        <div className="flex gap-2 justify-center">
+                          <button
+                            onClick={() =>
+                              toggleUserActive(u.user_id, !u.active)
+                            }
+                            className={`px-3 py-1 rounded-xl text-white transition ${
+                              u.active
+                                ? "bg-red-600 hover:bg-red-700"
+                                : "bg-green-600 hover:bg-green-700"
+                            }`}
+                          >
+                            Potvrdiť
+                          </button>
+                          <button
+                            onClick={cancelToggleUser}
+                            className="px-3 py-1 bg-gray-300 text-gray-700 rounded-xl hover:bg-gray-400 transition"
+                          >
+                            Zrušiť
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => confirmToggleUser(u.user_id)}
+                          className={`px-3 py-1 rounded-xl transition ${
+                            u.active
+                              ? "bg-red-100 text-red-600 hover:bg-red-200"
+                              : "bg-green-100 text-green-600 hover:bg-green-200"
+                          }`}
+                        >
+                          {u.active ? "Deaktivovať" : "Aktivovať"}
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -310,7 +391,7 @@ function AdminDashboard() {
               </thead>
               <tbody>
                 {filteredCars.map((c) => (
-                  <tr key={c.car_id} className="border-b">
+                  <tr key={c.car_id} className="border-y border-gray-300">
                     <td className="p-2">
                       <input
                         type="text"
@@ -383,7 +464,7 @@ function AdminDashboard() {
         {activeTab === "appointments" && (
           <div className="bg-white rounded-2xl shadow-xl p-6">
             <div className="flex flex-wrap gap-4 mb-4 items-center">
-              <div className="mb-3">
+              <div className="mb-2">
                 <input
                   type="text"
                   placeholder="Vyhľadať rezerváciu..."
@@ -444,7 +525,10 @@ function AdminDashboard() {
                 </thead>
                 <tbody>
                   {filteredAppointmentsWithSearch.map((a) => (
-                    <tr key={a.appointment_id} className="border-b">
+                    <tr
+                      key={a.appointment_id}
+                      className="border-y border-gray-300"
+                    >
                       <td className="p-2">
                         {a.brand} {a.model}
                       </td>
