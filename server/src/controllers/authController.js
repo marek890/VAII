@@ -59,9 +59,15 @@ export const loginUser = async (req, res) => {
   }
 
   try {
-    const result = await pool.query('SELECT * FROM "User" WHERE email = $1', [
-      email,
-    ]);
+    const result = await pool.query(
+      `
+  SELECT u.*, r.role_name
+  FROM "User" u
+  JOIN "Role" r ON u.role_id = r.role_id
+  WHERE u.email = $1
+  `,
+      [email]
+    );
 
     if (result.rows.length === 0) {
       return res.status(401).json({ error: "Užívateľ neexistuje" });
@@ -79,7 +85,11 @@ export const loginUser = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.user_id, email: user.email, role: user.role_id },
+      {
+        id: user.user_id,
+        email: user.email,
+        role: user.role_name,
+      },
       JWT_SECRET,
       { expiresIn: JWT_EXPIRES }
     );
@@ -87,6 +97,7 @@ export const loginUser = async (req, res) => {
     return res.status(200).json({
       message: "Prihlásenie úspešné",
       token,
+      role: user.role_name,
     });
   } catch (err) {
     console.error(err);

@@ -9,9 +9,12 @@ function Header() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileDropdown, setMobileDropdown] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
-    setIsLoggedIn(!!localStorage.getItem("token"));
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+    setRole(localStorage.getItem("role"));
   }, []);
 
   const toggleMenu = () => setIsOpen(!isOpen);
@@ -38,16 +41,22 @@ function Header() {
               Domov
             </Link>
           </li>
-          <li>
-            <Link to="/appointment" className="nav-link">
-              Rezervácia
-            </Link>
-          </li>
-          <li>
-            <Link to="/dashboard" className="nav-link">
-              Rezervácie
-            </Link>
-          </li>
+
+          {role !== "Mechanic" && (
+            <li>
+              <Link to="/appointment" className="nav-link">
+                Rezervácia
+              </Link>
+            </li>
+          )}
+
+          {(role === "Mechanic" || role === "Admin") && (
+            <li>
+              <Link to="/dashboard" className="nav-link">
+                Rezervácie
+              </Link>
+            </li>
+          )}
         </ul>
 
         {isLoggedIn ? (
@@ -64,12 +73,22 @@ function Header() {
                 <Link to="/profile" className="dropdown-item">
                   Profil
                 </Link>
-                <Link to="/admin_dashboard" className="dropdown-item">
-                  Admin panel
-                </Link>
-                <Link to="/vehicles" className="dropdown-item">
-                  Vozidlá
-                </Link>
+                {role === "Admin" && (
+                  <>
+                    <Link to="/admin_dashboard" className="dropdown-item">
+                      Admin panel
+                    </Link>
+                  </>
+                )}
+
+                {role !== "Mechanic" && (
+                  <>
+                    <Link to="/vehicles" className="dropdown-item">
+                      Vozidlá
+                    </Link>
+                  </>
+                )}
+
                 <button onClick={handleLogout} className="logout-btn">
                   Odhlásiť sa
                 </button>
@@ -98,18 +117,22 @@ function Header() {
                 Domov
               </Link>
             </li>
-            <li>
-              <Link to="/reservation" className="nav-link w-full text-center">
-                Rezervácia
-              </Link>
-            </li>
-            <li>
-              <Link to="/dashboard" className="nav-link w-full text-center">
-                Rezervácie
-              </Link>
-            </li>
-          </ul>
 
+            {role !== "Mechanic" && (
+              <li>
+                <Link to="/reservation" className="nav-link w-full text-center">
+                  Rezervácia
+                </Link>
+              </li>
+            )}
+            {(role === "Mechanic" || role === "Admin") && (
+              <li>
+                <Link to="/dashboard" className="nav-link w-full text-center">
+                  Rezervácie
+                </Link>
+              </li>
+            )}
+          </ul>
           {isLoggedIn ? (
             <div className="mt-4">
               <button
@@ -127,18 +150,26 @@ function Header() {
                   >
                     Profil
                   </Link>
-                  <Link
-                    to="/admin_dashboard"
-                    className="dropdown-item py-3 text-center"
-                  >
-                    Admin panel
-                  </Link>
-                  <Link
-                    to="/vehicles"
-                    className="dropdown-item py-3 text-center"
-                  >
-                    Vozidlá
-                  </Link>
+                  {role === "Admin" && (
+                    <>
+                      <Link
+                        to="/admin_dashboard"
+                        className="dropdown-item py-3 text-center"
+                      >
+                        Admin panel
+                      </Link>
+                    </>
+                  )}
+                  {role !== "Mechanic" && (
+                    <>
+                      <Link
+                        to="/vehicles"
+                        className="dropdown-item py-3 text-center"
+                      >
+                        Vozidlá
+                      </Link>
+                    </>
+                  )}
                   <button
                     onClick={handleLogout}
                     className="logout-btn py-3 text-center"

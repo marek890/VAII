@@ -40,6 +40,7 @@ function Login() {
       }
 
       localStorage.setItem("token", data.token);
+      localStorage.setItem("role", data.role);
       setMessageType("success");
       setMessage(data.message || "Prihlásenie úspešné!");
       window.location.href = "/";
