@@ -87,27 +87,73 @@ export const createAppointment = async (req, res) => {
     return res.status(400).json({ error: "Chýbajú údaje" });
   }
 
+  if (notes && notes.length > 200) {
+    return res
+      .status(400)
+      .json({ error: "Poznámky môžu mať maximálne 200 znakov" });
+  }
+
+  const today = new Date();
+  const selectedDate = new Date(`${appointment_date}T00:00`);
+  if (isNaN(selectedDate.getTime())) {
+    return res.status(400).json({ error: "Neplatný dátum" });
+  }
+  if (selectedDate < new Date(today.toDateString())) {
+    return res.status(400).json({ error: "Nemôžete vybrať minulý dátum" });
+  }
+
+  if (!ALL_TIMES.includes(appointment_time)) {
+    return res.status(400).json({ error: "Neplatný čas" });
+  }
+
+  if (appointment_date === today.toISOString().slice(0, 10)) {
+    const [hours, minutes] = appointment_time.split(":").map(Number);
+    const selectedDateTime = new Date(today);
+    selectedDateTime.setHours(hours, minutes, 0, 0);
+
+    if (selectedDateTime < today) {
+      return res.status(400).json({ error: "Nemôžete vybrať čas v minulosti" });
+    }
+  }
+
   try {
+    const carRes = await pool.query(
+      `SELECT car_id FROM "Car" WHERE car_id = $1 AND user_id = $2`,
+      [car_id, req.user.id],
+    );
+    if (carRes.rows.length === 0) {
+      return res
+        .status(400)
+        .json({ error: "Vybrané auto neexistuje alebo mu nepatrí" });
+    }
+
+    const serviceRes = await pool.query(
+      `SELECT service_id FROM "Service" WHERE service_id = ANY($1::int[])`,
+      [services],
+    );
+    if (serviceRes.rows.length !== services.length) {
+      return res
+        .status(400)
+        .json({ error: "Niektoré vybrané služby neexistujú" });
+    }
+
     const mechRes = await pool.query(
       `SELECT user_id FROM "User" WHERE role_id = 2 LIMIT 1`,
     );
-    if (mechRes.rows.length === 0)
+    if (mechRes.rows.length === 0) {
       return res.status(400).json({ error: "Žiadny mechanik nie je dostupný" });
-
+    }
     const mechanic_id = mechRes.rows[0].user_id;
 
-    const serviceRes = await pool.query(
-      `SELECT SUM(estimated_duration) AS total_duration
-       FROM "Service"
-       WHERE service_id = ANY($1::int[])`,
+    const totalDurationRes = await pool.query(
+      `SELECT SUM(estimated_duration) AS total_duration FROM "Service" WHERE service_id = ANY($1::int[])`,
       [services],
     );
-
-    const totalDuration = Number(serviceRes.rows[0].total_duration);
-
+    const totalDuration = Number(totalDurationRes.rows[0].total_duration);
     const requestedStart = timeToMinutes(appointment_time);
+    const requestedSlots = Math.ceil(totalDuration / 30);
 
-    const result = await pool.query(
+    const existingAppointments = await pool.query(
       `SELECT appointment_datetime, SUM(s.estimated_duration) AS total_duration
        FROM "Appointment" a
        JOIN "AppointmentService" aps ON a.appointment_id = aps.appointment_id
@@ -120,11 +166,11 @@ export const createAppointment = async (req, res) => {
     );
 
     const blockedTimes = [];
-    for (const row of result.rows) {
-      const appointmentTime = row.appointment_datetime
+    for (const row of existingAppointments.rows) {
+      const appointmentTimeStr = row.appointment_datetime
         .toISOString()
         .substr(11, 5);
-      const startMinutes = timeToMinutes(appointmentTime);
+      const startMinutes = timeToMinutes(appointmentTimeStr);
       const duration = Number(row.total_duration);
       const slotsNeeded = Math.ceil(duration / 30);
       for (let i = 0; i < slotsNeeded; i++) {
@@ -132,7 +178,6 @@ export const createAppointment = async (req, res) => {
       }
     }
 
-    const requestedSlots = Math.ceil(totalDuration / 30);
     for (let i = 0; i < requestedSlots; i++) {
       const slotTime = minutesToTime(requestedStart + i * 30);
       if (blockedTimes.includes(slotTime)) {
@@ -289,46 +334,46 @@ export const getAllAppointments = async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT
-  a.appointment_id,
-  a.appointment_datetime,
-  a.notes,
+        a.appointment_id,
+        a.appointment_datetime,
+        a.notes,
 
-  s.name AS status,
+        s.name AS status,
 
-  COALESCE(c.brand, '—') AS brand,
-  COALESCE(c.model, '—') AS model,
-  COALESCE(c.license_plate, '—') AS license_plate,
+        COALESCE(c.brand, '—') AS brand,
+        COALESCE(c.model, '—') AS model,
+        COALESCE(c.license_plate, '—') AS license_plate,
 
-  COALESCE(u.first_name, 'Neznámy') AS first_name,
-  COALESCE(u.last_name, 'užívateľ') AS last_name,
+        COALESCE(u.first_name, 'Neznámy') AS first_name,
+        COALESCE(u.last_name, 'užívateľ') AS last_name,
 
-  COALESCE(
-    json_agg(
-      json_build_object(
-        'service_id', srv.service_id,
-        'service_name', srv.service_name,
-        'estimated_duration', srv.estimated_duration
-      )
-    ) FILTER (WHERE srv.service_id IS NOT NULL),
-    '[]'
-  ) AS services
+        COALESCE(
+          json_agg(
+            json_build_object(
+              'service_id', srv.service_id,
+              'service_name', srv.service_name,
+              'estimated_duration', srv.estimated_duration
+            )
+          ) FILTER (WHERE srv.service_id IS NOT NULL),
+          '[]'
+        ) AS services
 
-FROM "Appointment" a
-JOIN "Status" s ON a.status_id = s.status_id
+      FROM "Appointment" a
+      JOIN "Status" s ON a.status_id = s.status_id
 
-LEFT JOIN "Car" c ON a.car_id = c.car_id
-LEFT JOIN "User" u ON a.customer_id = u.user_id
-LEFT JOIN "AppointmentService" aps ON a.appointment_id = aps.appointment_id
-LEFT JOIN "Service" srv ON aps.service_id = srv.service_id
+      LEFT JOIN "Car" c ON a.car_id = c.car_id
+      LEFT JOIN "User" u ON a.customer_id = u.user_id
+      LEFT JOIN "AppointmentService" aps ON a.appointment_id = aps.appointment_id
+      LEFT JOIN "Service" srv ON aps.service_id = srv.service_id
 
-GROUP BY
-  a.appointment_id,
-  s.name,
-  c.brand, c.model, c.license_plate,
-  u.first_name, u.last_name
+      GROUP BY
+        a.appointment_id,
+        s.name,
+        c.brand, c.model, c.license_plate,
+        u.first_name, u.last_name
 
-ORDER BY a.appointment_datetime;
-`,
+      ORDER BY a.appointment_datetime;
+      `,
     );
 
     res.json(result.rows);

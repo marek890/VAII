@@ -1,58 +1,41 @@
+import "./Home.css";
 import { Link } from "react-router-dom";
 import { BsCalendarCheck } from "react-icons/bs";
 import { IoCar } from "react-icons/io5";
 
 function Home() {
   return (
-    <div className="min-h-screen bg-linear-to-b from-[#d8f5d8] via-[#b8f0b8] to-[#78e778] px-4 py-10 mt-20">
-      <div className="max-w-6xl mx-auto">
-        <div className="bg-white p-8 rounded-2xl shadow-xl/20 mb-10 text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-3">
-            Vitajte vo Vajku
-          </h1>
-
-          <p className="text-gray-600 mt-3 text-lg">
-            Jednoduchý rezervačný systém pre autoservisy.
-          </p>
+    <div className="home-container">
+      <div className="home-wrapper">
+        <div className="home-card">
+          <h1>Vitajte vo Vajku</h1>
+          <p>Jednoduchý rezervačný systém pre autoservisy.</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-          <Link
-            to="/appointment"
-            className="bg-white p-7 rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-200 flex flex-col items-center text-center"
-          >
-            <BsCalendarCheck className="text-[#78e778] text-6xl mb-4" />
-            <h3 className="text-2xl font-semibold text-gray-900 mb-2">
-              Vytvoriť rezerváciu
-            </h3>
-            <p className="text-gray-600">
+        <div className="home-grid">
+          <Link to="/appointment" className="home-link">
+            <BsCalendarCheck className="home-icon" />
+            <h3>Vytvoriť rezerváciu</h3>
+            <p>
               Vyberte vozidlo a zarezervujte si termín servisnej prehliadky.
             </p>
           </Link>
 
-          <Link
-            to="/vehicles"
-            className="bg-white p-7 rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-200 flex flex-col items-center text-center"
-          >
-            <IoCar className="text-[#78e778] text-6xl mb-4" />
-            <h3 className="text-2xl font-semibold text-gray-900 mb-2">
-              Moje vozidlá
-            </h3>
-            <p className="text-gray-600">
+          <Link to="/vehicles" className="home-link">
+            <IoCar className="home-icon" />
+            <h3>Moje vozidlá</h3>
+            <p>
               Spravujte svoje autá — pridávajte nové alebo upravujte existujúce.
             </p>
           </Link>
         </div>
 
-        <div className="bg-white p-7 rounded-2xl shadow-xl/25 text-center mt-12">
-          <h3 className="text-2xl font-semibold text-gray-900 mb-3">
-            Potrebujete pomoc?
-          </h3>
-          <p className="text-gray-700 text-lg">
-            Kontaktujte nás:
-            <span className="font-semibold"> +421 900 123 456</span>
+        <div className="help-card">
+          <h3>Potrebujete pomoc?</h3>
+          <p>
+            Kontaktujte nás: <span>+421 900 123 456</span>
             <br />
-            Email: <span className="font-semibold">info@vajko.sk</span>
+            Email: <span>info@vajko.sk</span>
           </p>
         </div>
       </div>

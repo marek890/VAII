@@ -1,10 +1,9 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { isLoggedIn } from "../utils/auth";
 
 function Login() {
   useEffect(() => {
-    if (isLoggedIn()) {
+    if (!!localStorage.getItem("token")) {
       window.location.href = "/";
     }
   }, []);

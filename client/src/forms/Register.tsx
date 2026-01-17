@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import { isLoggedIn } from "../utils/auth";
 
 function Register() {
   useEffect(() => {
-    if (isLoggedIn()) {
+    if (localStorage.getItem("token")) {
       window.location.href = "/";
     }
   }, []);
@@ -16,7 +15,7 @@ function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"error" | "success">(
-    "success"
+    "success",
   );
 
   const [firstNameError, setFirstNameError] = useState("");
@@ -67,7 +66,7 @@ function Register() {
     const value = e.target.value;
     setLastName(value);
     setLastNameError(
-      value.length < 2 ? "Priezvisko musí mať aspoň 2 znaky" : ""
+      value.length < 2 ? "Priezvisko musí mať aspoň 2 znaky" : "",
     );
   };
 
@@ -77,7 +76,7 @@ function Register() {
 
     const phoneRegex = /^(\+421|0)\d{9}$/;
     setPhoneError(
-      value && !phoneRegex.test(value) ? "Zadaj platné telefónne číslo" : ""
+      value && !phoneRegex.test(value) ? "Zadaj platné telefónne číslo" : "",
     );
   };
 
