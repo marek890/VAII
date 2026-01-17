@@ -143,3 +143,55 @@ export const updateAppointmentStatus = async (req, res) => {
       .json({ error: "Nepodarilo sa aktualizovať status rezervácie" });
   }
 };
+
+export const updateVehicle = async (req, res) => {
+  const carId = parseInt(req.params.car_id);
+  const { brand, model, license_plate } = req.body;
+
+  try {
+    if (brand) {
+      await pool.query(`UPDATE "Car" SET brand = $1 WHERE car_id = $2`, [
+        brand,
+        carId,
+      ]);
+    }
+
+    if (model) {
+      await pool.query(`UPDATE "Car" SET model = $1 WHERE car_id = $2`, [
+        model,
+        carId,
+      ]);
+    }
+
+    if (license_plate !== undefined) {
+      await pool.query(
+        `UPDATE "Car" SET license_plate = $1 WHERE car_id = $2`,
+        [license_plate, carId]
+      );
+    }
+
+    res.json({ message: "Vozidlo aktualizované" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Nepodarilo sa aktualizovať vozidlo" });
+  }
+};
+
+export const deleteVehicle = async (req, res) => {
+  const carId = parseInt(req.params.car_id);
+
+  try {
+    await pool.query(`DELETE FROM "Car" WHERE car_id = $1`, [carId]);
+    res.json({ message: "Vozidlo vymazané" });
+  } catch (err) {
+    console.error(err);
+
+    if (err.code === "23503") {
+      return res.status(400).json({
+        error: "Vozidlo má existujúce rezervácie a nemôže byť vymazané",
+      });
+    }
+
+    res.status(500).json({ error: "Nepodarilo sa vymazať vozidlo" });
+  }
+};

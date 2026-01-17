@@ -45,6 +45,7 @@ function AdminDashboard() {
   const [userSearch, setUserSearch] = useState("");
   const [carSearch, setCarSearch] = useState("");
   const [appointmentSearch, setAppointmentSearch] = useState("");
+  const [carToDelete, setCarToDelete] = useState<number | null>(null);
 
   const fetchUsers = async () => {
     const res = await fetch("http://localhost:5001/api/admin/users", {
@@ -88,6 +89,36 @@ function AdminDashboard() {
     fetchUsers();
   };
 
+  const updateCar = async (car_id: number, field: string, value: string) => {
+    await fetch(`http://localhost:5001/api/admin/vehicles/${car_id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ [field]: value }),
+    });
+    fetchCars();
+  };
+
+  const deleteCar = async (car_id: number) => {
+    await fetch(`http://localhost:5001/api/admin/vehicles/${car_id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    setCarToDelete(null);
+    fetchCars();
+  };
+
+  const confirmDeleteCar = (car_id: number) => {
+    setCarToDelete(car_id);
+  };
+
+  const cancelDeleteCar = () => {
+    setCarToDelete(null);
+  };
   const updateAppointmentStatus = async (id: number, status: string) => {
     await fetch(`http://localhost:5001/api/admin/appointments/${id}/status`, {
       method: "PUT",
@@ -194,7 +225,7 @@ function AdminDashboard() {
                 className="w-full px-5 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#78e778] focus:outline-none shadow-sm placeholder-gray-400 transition-all duration-200 hover:shadow-md"
               />
             </div>
-            <table className="min-w-full">
+            <table className="min-w-full table-fixed text-center">
               <thead className="bg-gray-200">
                 <tr>
                   <th className="p-3">Meno</th>
@@ -213,7 +244,7 @@ function AdminDashboard() {
                         onChange={(e) =>
                           updateUser(u.user_id, "name", e.target.value)
                         }
-                        className="border px-2 py-1 rounded w-full"
+                        className="px-2 py-1 w-full border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#78e778] focus:outline-none shadow-sm placeholder-gray-400 transition-all duration-200 hover:shadow-md"
                       />
                     </td>
                     <td className="p-2">
@@ -223,7 +254,7 @@ function AdminDashboard() {
                         onChange={(e) =>
                           updateUser(u.user_id, "email", e.target.value)
                         }
-                        className="border px-2 py-1 rounded w-full"
+                        className="px-2 py-1 w-full border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#78e778] focus:outline-none shadow-sm placeholder-gray-400 transition-all duration-200 hover:shadow-md"
                       />
                     </td>
                     <td className="p-2">
@@ -232,7 +263,7 @@ function AdminDashboard() {
                         onChange={(e) =>
                           updateUser(u.user_id, "role", e.target.value)
                         }
-                        className="border px-2 py-1 rounded w-full"
+                        className="px-2 py-1 w-full border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#78e778] focus:outline-none shadow-sm placeholder-gray-400 transition-all duration-200 hover:shadow-md"
                       >
                         <option value="customer">Customer</option>
                         <option value="mechanic">Mechanic</option>
@@ -244,7 +275,7 @@ function AdminDashboard() {
                         onClick={() =>
                           updateUser(u.user_id, "deactivate", "true")
                         }
-                        className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                        className="px-3 py-1 bg-red-500 text-white rounded-xl hover:bg-red-600 transition"
                       >
                         Deaktivovať
                       </button>
@@ -274,15 +305,74 @@ function AdminDashboard() {
                   <th className="p-3">Model</th>
                   <th className="p-3">ŠPZ</th>
                   <th className="p-3">Vlastník</th>
+                  <th className="p-3">Akcie</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredCars.map((c) => (
                   <tr key={c.car_id} className="border-b">
-                    <td className="p-2">{c.brand}</td>
-                    <td className="p-2">{c.model}</td>
-                    <td className="p-2">{c.license_plate}</td>
-                    <td className="p-2">{c.owner_name}</td>
+                    <td className="p-2">
+                      <input
+                        type="text"
+                        value={c.brand}
+                        onChange={(e) =>
+                          updateCar(c.car_id, "brand", e.target.value)
+                        }
+                        className="px-2 py-1 w-full border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#78e778]"
+                      />
+                    </td>
+
+                    <td className="p-2">
+                      <input
+                        type="text"
+                        value={c.model}
+                        onChange={(e) =>
+                          updateCar(c.car_id, "model", e.target.value)
+                        }
+                        className="px-2 py-1 w-full border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#78e778]"
+                      />
+                    </td>
+
+                    <td className="p-2">
+                      <input
+                        type="text"
+                        value={c.license_plate}
+                        onChange={(e) =>
+                          updateCar(c.car_id, "license_plate", e.target.value)
+                        }
+                        className="px-2 py-1 w-full border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#78e778]"
+                      />
+                    </td>
+
+                    <td className="p-2 font-semibold text-gray-700">
+                      {c.owner_name}
+                    </td>
+
+                    <td className="p-2">
+                      {carToDelete === c.car_id ? (
+                        <div className="flex gap-2 justify-center">
+                          <button
+                            onClick={() => deleteCar(c.car_id)}
+                            className="px-3 py-1 bg-red-600 text-white rounded-xl hover:bg-red-700 transition"
+                          >
+                            Potvrdiť
+                          </button>
+                          <button
+                            onClick={cancelDeleteCar}
+                            className="px-3 py-1 bg-gray-300 text-gray-700 rounded-xl hover:bg-gray-400 transition"
+                          >
+                            Zrušiť
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => confirmDeleteCar(c.car_id)}
+                          className="px-3 py-1 bg-red-100 text-red-600 rounded-xl hover:bg-red-200 transition"
+                        >
+                          Vymazať
+                        </button>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -324,7 +414,7 @@ function AdminDashboard() {
                   type="date"
                   value={dateFrom}
                   onChange={(e) => setDateFrom(e.target.value)}
-                  className="border px-2 py-1 rounded"
+                  className="px-2 py-1 w-full border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#78e778] focus:outline-none shadow-sm placeholder-gray-400 transition-all duration-200 hover:shadow-md"
                 />
               </div>
               <div>
@@ -333,7 +423,7 @@ function AdminDashboard() {
                   type="date"
                   value={dateTo}
                   onChange={(e) => setDateTo(e.target.value)}
-                  className="border px-2 py-1 rounded"
+                  className="px-2 py-1 w-full border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#78e778] focus:outline-none shadow-sm placeholder-gray-400 transition-all duration-200 hover:shadow-md"
                 />
               </div>
             </div>
@@ -350,7 +440,6 @@ function AdminDashboard() {
                     <th className="p-3">Status</th>
                     <th className="p-3">Služby</th>
                     <th className="p-3">Poznámky</th>
-                    <th className="p-3">Akcie</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -379,7 +468,7 @@ function AdminDashboard() {
                               e.target.value
                             )
                           }
-                          className="border px-2 py-1 rounded"
+                          className="px-2 py-1 w-full border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#78e778] focus:outline-none shadow-sm placeholder-gray-400 transition-all duration-200 hover:shadow-md mr-13"
                         >
                           {statuses.map((status) => (
                             <option key={status} value={status}>
@@ -392,11 +481,6 @@ function AdminDashboard() {
                         {a.services?.map((s) => s.service_name).join(", ")}
                       </td>
                       <td className="p-2">{a.notes}</td>
-                      <td className="p-2">
-                        <button className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600">
-                          Zrušiť
-                        </button>
-                      </td>
                     </tr>
                   ))}
                 </tbody>
