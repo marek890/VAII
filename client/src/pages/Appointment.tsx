@@ -10,7 +10,7 @@ function BookAppointment() {
 
   const [appointments, setAppointments] = useState<any[]>([]);
   const [appointmentToCancel, setAppointmentToCancel] = useState<number | null>(
-    null
+    null,
   );
 
   const [selectedCar, setSelectedCar] = useState<number | null>(null);
@@ -22,7 +22,7 @@ function BookAppointment() {
 
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"error" | "success">(
-    "success"
+    "success",
   );
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -63,14 +63,36 @@ function BookAppointment() {
 
   const fetchAvailableTimes = async (date: string) => {
     if (!date) return setAvailableTimes([]);
+
+    const today = new Date();
+    const selectedDate = new Date(date);
+
+    if (selectedDate < new Date(today.toDateString())) {
+      setAvailableTimes([]);
+      setAppointmentTime("");
+      setMessageType("error");
+      setMessage("Nemôžete vybrať minulý dátum.");
+      return;
+    }
+
     try {
       const res = await fetch(
         `http://localhost:5001/api/appointment/available-times?date=${date}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
-      const data = await res.json();
+      let data: string[] = await res.json();
+
+      if (date === today.toISOString().slice(0, 10)) {
+        const nowMinutes = today.getHours() * 60 + today.getMinutes();
+        data = data.filter((time) => {
+          const [h, m] = time.split(":").map(Number);
+          return h * 60 + m > nowMinutes;
+        });
+      }
+
       setAvailableTimes(data);
       setAppointmentTime("");
+      setMessage("");
     } catch {
       setAvailableTimes([]);
     }
@@ -90,7 +112,7 @@ function BookAppointment() {
     setSelectedServices((prev) =>
       prev.includes(serviceId)
         ? prev.filter((id) => id !== serviceId)
-        : [...prev, serviceId]
+        : [...prev, serviceId],
     );
   };
 
@@ -104,6 +126,7 @@ function BookAppointment() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (
       !selectedCar ||
       selectedServices.length === 0 ||
@@ -114,6 +137,28 @@ function BookAppointment() {
       setMessage("Vyplňte všetky údaje.");
       return;
     }
+
+    const today = new Date();
+    const selectedDate = new Date(appointmentDate);
+
+    if (selectedDate < new Date(today.toDateString())) {
+      setMessageType("error");
+      setMessage("Nemôžete vybrať minulý dátum.");
+      return;
+    }
+
+    if (appointmentDate === today.toISOString().slice(0, 10)) {
+      const [hours, minutes] = appointmentTime.split(":").map(Number);
+      const selectedDateTime = new Date(today);
+      selectedDateTime.setHours(hours, minutes, 0, 0);
+
+      if (selectedDateTime < today) {
+        setMessageType("error");
+        setMessage("Nemôžete vybrať čas v minulosti.");
+        return;
+      }
+    }
+
     try {
       const res = await fetch("http://localhost:5001/api/appointment", {
         method: "POST",
@@ -157,7 +202,7 @@ function BookAppointment() {
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
       setAppointmentToCancel(null);
       fetchAppointments();
@@ -368,7 +413,7 @@ function BookAppointment() {
                     {
                       hour: "2-digit",
                       minute: "2-digit",
-                    }
+                    },
                   )}
                 </p>
 
