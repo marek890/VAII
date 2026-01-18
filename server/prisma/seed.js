@@ -1,19 +1,31 @@
-import { exec } from "child_process";
+import { readFile } from "fs/promises";
+import { Client } from "pg";
 import dotenv from "dotenv";
 
 dotenv.config();
 
 const sqlFile = "prisma/seed.sql";
 
-const command = `PGUSER=${process.env.POSTGRES_USER} PGPASSWORD=${process.env.POSTGRES_PASSWORD} PGHOST=localhost PGPORT=5432 PGDATABASE=${process.env.POSTGRES_DB} psql -f ${sqlFile}`;
+async function seedDatabase() {
+  const client = new Client({
+    user: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    host: "localhost",
+    port: 5432,
+    database: process.env.POSTGRES_DB,
+  });
 
-exec(command, (error, stdout, stderr) => {
-  if (error) {
-    console.error(`Chyba pri seedovaní: ${error.message}`);
+  try {
+    await client.connect();
+    const sql = await readFile(sqlFile, "utf8");
+    await client.query(sql);
+    console.log("Seed úspešne spustený!");
+  } catch (err) {
+    console.error("Chyba pri seedovaní:", err);
     process.exit(1);
+  } finally {
+    await client.end();
   }
-  if (stderr) {
-    console.error(`Chyby SQL: ${stderr}`);
-  }
-  console.log(`Seed úspešne spustený:\n${stdout}`);
-});
+}
+
+seedDatabase();
