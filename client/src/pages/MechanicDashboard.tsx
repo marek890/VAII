@@ -152,7 +152,7 @@ function MechanicDashboard() {
             return (
               <div
                 key={a.appointment_id}
-                className="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-200 min-w-[400px]"
+                className="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-200 min-w-0 w-full sm:min-w-[400px]"
               >
                 <div className="bg-[#78e778] h-12 flex items-center px-4">
                   <span className="text-white font-bold text-lg">
