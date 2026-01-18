@@ -120,7 +120,7 @@ function Header() {
 
             {role !== "Mechanic" && (
               <li>
-                <Link to="/reservation" className="nav-link w-full text-center">
+                <Link to="/appointment" className="nav-link w-full text-center">
                   Rezervácia
                 </Link>
               </li>
