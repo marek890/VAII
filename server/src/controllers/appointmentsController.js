@@ -264,12 +264,28 @@ export const cancelAppointment = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await pool.query(
-      `SELECT status_id
-       FROM "Appointment"
-       WHERE appointment_id = $1 AND customer_id = $2`,
-      [id, req.user.id],
-    );
+    let query;
+    let params;
+
+    if (req.user.role === "Customer") {
+      query = `
+        SELECT status_id
+        FROM "Appointment"
+        WHERE appointment_id = $1 AND customer_id = $2
+      `;
+      params = [id, req.user.id];
+    } else if (req.user.role === "Mechanic" || req.user.role === "Admin") {
+      query = `
+        SELECT status_id
+        FROM "Appointment"
+        WHERE appointment_id = $1
+      `;
+      params = [id];
+    } else {
+      return res.status(403).json({ error: "Nemáte oprávnenie" });
+    }
+
+    const result = await pool.query(query, params);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: "Objednávka neexistuje" });

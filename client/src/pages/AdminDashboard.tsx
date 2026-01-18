@@ -36,7 +36,7 @@ function AdminDashboard() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
 
   const [activeTab, setActiveTab] = useState<"users" | "cars" | "appointments">(
-    "users"
+    "users",
   );
 
   const statuses = ["Vytvorená", "Začatá", "Ukončená", "Zrušená"];
@@ -196,7 +196,7 @@ function AdminDashboard() {
       c.brand.toLowerCase().includes(carSearch.toLowerCase()) ||
       c.model.toLowerCase().includes(carSearch.toLowerCase()) ||
       c.license_plate.toLowerCase().includes(carSearch.toLowerCase()) ||
-      c.owner_name.toLowerCase().includes(carSearch.toLowerCase())
+      c.owner_name.toLowerCase().includes(carSearch.toLowerCase()),
   );
 
   const filteredAppointmentsWithSearch = filteredAppointments.filter(
@@ -206,10 +206,10 @@ function AdminDashboard() {
       a.license_plate.toLowerCase().includes(appointmentSearch.toLowerCase()) ||
       a.customer_name.toLowerCase().includes(appointmentSearch.toLowerCase()) ||
       a.services.some((s) =>
-        s.service_name.toLowerCase().includes(appointmentSearch.toLowerCase())
+        s.service_name.toLowerCase().includes(appointmentSearch.toLowerCase()),
       ) ||
       (a.notes?.toLowerCase().includes(appointmentSearch.toLowerCase()) ??
-        false)
+        false),
   );
 
   return (
@@ -540,7 +540,7 @@ function AdminDashboard() {
                       <td className="p-2">
                         {new Date(a.appointment_datetime).toLocaleTimeString(
                           [],
-                          { hour: "2-digit", minute: "2-digit" }
+                          { hour: "2-digit", minute: "2-digit" },
                         )}
                       </td>
                       <td className="p-2">
@@ -549,7 +549,7 @@ function AdminDashboard() {
                           onChange={(e) =>
                             updateAppointmentStatus(
                               a.appointment_id,
-                              e.target.value
+                              e.target.value,
                             )
                           }
                           className="px-2 py-1 w-full border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#78e778] focus:outline-none shadow-sm placeholder-gray-400 transition-all duration-200 hover:shadow-md mr-13"

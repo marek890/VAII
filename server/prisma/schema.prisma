@@ -37,7 +37,7 @@ model Role {
 
 model Status {
   status_id Int @id @default(autoincrement())
-  name      String
+  name      String @unique
   appointments Appointment[]
 }
 

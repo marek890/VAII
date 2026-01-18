@@ -33,7 +33,7 @@ export const updateUser = async (req, res) => {
       const lastName = lastNameArr.join(" ") || "";
       await pool.query(
         `UPDATE "User" SET first_name = $1, last_name = $2 WHERE user_id = $3`,
-        [firstName, lastName, userId]
+        [firstName, lastName, userId],
       );
     }
 
@@ -127,7 +127,7 @@ export const updateAppointmentStatus = async (req, res) => {
   try {
     const statusResult = await pool.query(
       `SELECT status_id FROM "Status" WHERE name = $1`,
-      [status]
+      [status],
     );
     if (statusResult.rows.length === 0) {
       return res.status(400).json({ error: "Status neexistuje" });
@@ -137,7 +137,7 @@ export const updateAppointmentStatus = async (req, res) => {
 
     await pool.query(
       `UPDATE "Appointment" SET status_id = $1 WHERE appointment_id = $2`,
-      [statusId, appointmentId]
+      [statusId, appointmentId],
     );
 
     res.json({ message: "Status rezervácie aktualizovaný" });
@@ -171,7 +171,7 @@ export const updateVehicle = async (req, res) => {
     if (license_plate !== undefined) {
       await pool.query(
         `UPDATE "Car" SET license_plate = $1 WHERE car_id = $2`,
-        [license_plate, carId]
+        [license_plate, carId],
       );
     }
 

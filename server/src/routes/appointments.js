@@ -16,7 +16,12 @@ router.get("/available-times", verifyToken, getAvailableTimes);
 router.get("/services", verifyToken, getServices);
 router.post("/", verifyToken, createAppointment);
 router.get("/", verifyToken, getUserAppointments);
-router.delete("/:id", verifyToken, cancelAppointment);
+router.delete(
+  "/:id",
+  verifyToken,
+  requireRole(["Customer", "Mechanic", "Admin"]),
+  cancelAppointment,
+);
 router.put(
   "/:id/status",
   verifyToken,

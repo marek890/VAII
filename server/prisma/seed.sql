@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 INSERT INTO "Role" ("role_name") VALUES
 ('Customer'),
 ('Mechanic'),
@@ -11,14 +13,17 @@ INSERT INTO "Status" ("name") VALUES
 ('Zrušená')
 ON CONFLICT ("name") DO NOTHING;
 
-INSERT INTO "User" ("first_name", "last_name", "email", "password", "phone", "role_id", "active") VALUES
-('Peter', 'Novák', 'peter@gmail.com', 'admin', '0912345678', 3, TRUE),
-('Ján', 'Kováč', 'jan@gmail.com', 'mechanic', '0901234567', 2, TRUE),
-('Marek', 'Horváth', 'marek@gmail.com', 'mechanic', '0909876543', 2, TRUE),
-('Eva', 'Horváthová', 'eva@gmail.com', 'customer', '0908765432', 1, TRUE),
-('Tomáš', 'Biely', 'tomas@gmail.com', 'customer', '0911111111', 1, TRUE),
-('Lucia', 'Zelená', 'lucia@gmail.com', 'customer', '0922222222', 1, TRUE)
+INSERT INTO "User"
+("first_name", "last_name", "email", "password", "phone", "role_id", "active")
+VALUES
+('Peter', 'Novák', 'peter@gmail.com', crypt('admin123', gen_salt('bf')), '0912345678', 3, TRUE),
+('Ján', 'Kováč', 'jan@gmail.com', crypt('mechanic', gen_salt('bf')), '0901234567', 2, TRUE),
+('Marek', 'Horváth', 'marek@gmail.com', crypt('mechanic', gen_salt('bf')), '0909876543', 2, TRUE),
+('Eva', 'Horváthová', 'eva@gmail.com', crypt('customer', gen_salt('bf')), '0908765432', 1, TRUE),
+('Tomáš', 'Biely', 'tomas@gmail.com', crypt('customer', gen_salt('bf')), '0911111111', 1, TRUE),
+('Lucia', 'Zelená', 'lucia@gmail.com', crypt('customer', gen_salt('bf')), '0922222222', 1, TRUE)
 ON CONFLICT ("email") DO NOTHING;
+
 
 INSERT INTO "Car" ("brand", "model", "license_plate", "year", "vin", "fuel_type", "mileage", "color", "user_id") VALUES
 ('Toyota', 'Corolla', 'BA123CD', 2018, 'JTDBU4EE9A9123456', 'Benzín', 45000, 'Biela', 4),
