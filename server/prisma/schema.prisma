@@ -53,6 +53,7 @@ model Car {
   color         String?
   user_id       Int
   user          User        @relation(fields: [user_id], references: [user_id])
+  deleted       Boolean    @default(false)
 
   appointments  Appointment[]
 }

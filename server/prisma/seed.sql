@@ -24,15 +24,16 @@ VALUES
 ('Lucia', 'Zelená', 'lucia@gmail.com', crypt('customer', gen_salt('bf')), '0922222222', 1, TRUE)
 ON CONFLICT ("email") DO NOTHING;
 
-
-INSERT INTO "Car" ("brand", "model", "license_plate", "year", "vin", "fuel_type", "mileage", "color", "user_id") VALUES
-('Toyota', 'Corolla', 'BA123CD', 2018, 'JTDBU4EE9A9123456', 'Benzín', 45000, 'Biela', 4),
-('BMW', '320d', 'BB456EF', 2020, 'WBAVM71020K123456', 'Diesel', 30000, 'Čierna', 4),
-('Audi', 'A4', 'BC789GH', 2019, 'WAUZZZ8K9DA123456', 'Benzín', 40000, 'Modrá', 5),
-('Honda', 'Civic', 'BD111IJ', 2017, '2HGFG3B52HH123456', 'Benzín', 55000, 'Šedá', 5),
-('Ford', 'Focus', 'BE222KL', 2021, 'WF0XXXTTGXXX12345', 'Diesel', 25000, 'Červená', 6),
-('Škoda', 'Octavia', 'BF333MN', 2016, 'TMBJG9NE1G1234567', 'Benzín', 80000, 'Biela', 6)
-ON CONFLICT ("car_id") DO NOTHING;
+INSERT INTO "Car"
+("brand", "model", "license_plate", "year", "vin", "fuel_type", "mileage", "color", "user_id", "deleted")
+VALUES
+('Toyota', 'Corolla', 'BA123CD', 2018, 'JTDBU4EE9A9123456', 'Benzín', 45000, 'Biela', 4, false),
+('BMW', '320d', 'BB456EF', 2020, 'WBAVM71020K123456', 'Diesel', 30000, 'Čierna', 4, false),
+('Audi', 'A4', 'BC789GH', 2019, 'WAUZZZ8K9DA123456', 'Benzín', 40000, 'Modrá', 5, false),
+('Honda', 'Civic', 'BD111IJ', 2017, '2HGFG3B52HH123456', 'Benzín', 55000, 'Šedá', 5, false),
+('Ford', 'Focus', 'BE222KL', 2021, 'WF0XXXTTGXXX12345', 'Diesel', 25000, 'Červená', 6, false),
+('Škoda', 'Octavia', 'BF333MN', 2016, 'TMBJG9NE1G1234567', 'Benzín', 80000, 'Biela', 6, false)
+ON CONFLICT DO NOTHING;
 
 INSERT INTO "Service" ("service_name", "description", "estimated_duration") VALUES
 ('Výmena oleja', 'Kompletná výmena motorového oleja a filtra', 30),

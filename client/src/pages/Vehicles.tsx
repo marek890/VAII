@@ -17,7 +17,7 @@ function Vehicles() {
 
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"error" | "success">(
-    "success"
+    "success",
   );
 
   const token = localStorage.getItem("token");
@@ -28,7 +28,10 @@ function Vehicles() {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-      setVehicles(data);
+
+      const activeVehicles = data.filter((v: any) => !v.deleted);
+
+      setVehicles(activeVehicles);
     } catch (err) {
       console.log(err);
     }
@@ -142,7 +145,7 @@ function Vehicles() {
 
       setMessageType("success");
       setMessage(
-        selectedVehicle ? "Vozidlo aktualizované!" : "Vozidlo pridané!"
+        selectedVehicle ? "Vozidlo aktualizované!" : "Vozidlo pridané!",
       );
 
       resetForm();

@@ -4,8 +4,8 @@ import { validateVehicleData } from "../utils/validators.js";
 export const getVehicles = async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT * FROM "Car" WHERE "user_id" = $1',
-      [req.user.id]
+      'SELECT * FROM "Car" WHERE "user_id" = $1 AND deleted = false',
+      [req.user.id],
     );
     res.json(result.rows);
   } catch (error) {
@@ -38,7 +38,7 @@ export const addVehicle = async (req, res) => {
         mileage || null,
         color || null,
         req.user.id,
-      ]
+      ],
     );
 
     res.json(result.rows[0]);
@@ -81,7 +81,7 @@ export const updateVehicle = async (req, res) => {
         color || null,
         id,
         req.user.id,
-      ]
+      ],
     );
 
     if (result.rows.length === 0)
@@ -99,12 +99,20 @@ export const deleteVehicle = async (req, res) => {
 
   try {
     const result = await pool.query(
-      'DELETE FROM "Car" WHERE "car_id"=$1 AND "user_id"=$2 RETURNING *',
-      [id, req.user.id]
+      `UPDATE "Car"
+       SET deleted = true
+       WHERE car_id = $1
+         AND user_id = $2
+         AND deleted = false
+       RETURNING car_id`,
+      [id, req.user.id],
     );
 
-    if (result.rows.length === 0)
-      return res.status(404).json({ message: "Vozidlo sa nenašlo" });
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        message: "Vozidlo sa nenašlo alebo už bolo odstránené",
+      });
+    }
 
     res.json({ message: "Vozidlo bolo odstránené" });
   } catch (error) {

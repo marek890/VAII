@@ -77,6 +77,7 @@ export const getVehicles = async (req, res) => {
         COALESCE(u.first_name || ' ' || u.last_name, '') AS owner_name
       FROM "Car" v
       JOIN "User" u ON v.user_id = u.user_id
+      WHERE v.deleted = false
       ORDER BY v.car_id
     `);
     res.json(result.rows);
@@ -186,17 +187,24 @@ export const deleteVehicle = async (req, res) => {
   const carId = parseInt(req.params.car_id);
 
   try {
-    await pool.query(`DELETE FROM "Car" WHERE car_id = $1`, [carId]);
-    res.json({ message: "Vozidlo vymazané" });
-  } catch (err) {
-    console.error(err);
+    const result = await pool.query(
+      `UPDATE "Car"
+       SET deleted = true
+       WHERE car_id = $1
+         AND deleted = false
+       RETURNING car_id`,
+      [carId],
+    );
 
-    if (err.code === "23503") {
-      return res.status(400).json({
-        error: "Vozidlo má existujúce rezervácie a nemôže byť vymazané",
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        error: "Vozidlo sa nenašlo alebo už bolo odstránené",
       });
     }
 
-    res.status(500).json({ error: "Nepodarilo sa vymazať vozidlo" });
+    res.json({ message: "Vozidlo bolo odstránené" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Nepodarilo sa odstrániť vozidlo" });
   }
 };

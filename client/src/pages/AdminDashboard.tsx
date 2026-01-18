@@ -64,7 +64,7 @@ function AdminDashboard() {
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await res.json();
-    setCars(data);
+    setCars(data.filter((c: any) => !c.deleted));
   };
 
   const fetchAppointments = async () => {
