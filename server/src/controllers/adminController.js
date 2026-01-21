@@ -87,6 +87,8 @@ export const getVehicles = async (req, res) => {
   }
 };
 
+// Select vygenerovaný umelou intelingenciou
+
 export const getAppointments = async (req, res) => {
   try {
     const result = await pool.query(`

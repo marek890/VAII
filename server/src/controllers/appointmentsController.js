@@ -216,6 +216,8 @@ export const createAppointment = async (req, res) => {
   }
 };
 
+// Select vygenerovaný umelou intelingenciou
+
 export const getUserAppointments = async (req, res) => {
   try {
     const result = await pool.query(
@@ -345,6 +347,8 @@ export const updateAppointmentStatus = async (req, res) => {
       .json({ error: "Chyba pri aktualizácii statusu objednávky" });
   }
 };
+
+// Select vygenerovaný umelou intelingenciou
 
 export const getAllAppointments = async (req, res) => {
   try {

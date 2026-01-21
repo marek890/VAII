@@ -1,3 +1,5 @@
+-- Vygenerované umelou intelingenciou
+
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 INSERT INTO "Role" ("role_name") VALUES
